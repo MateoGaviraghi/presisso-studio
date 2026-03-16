@@ -75,18 +75,21 @@ export interface MaterialOption {
 }
 
 export type ProductCategory =
-  | 'sofa'
-  | 'mesa'
-  | 'silla'
-  | 'estanteria'
-  | 'cama'
-  | 'escritorio'
-  | 'otro';
+  | 'cabinet'
+  | 'countertop'
+  | 'table'
+  | 'chair'
+  | 'shelf'
+  | 'wardrobe'
+  | 'accessory';
 
 export type RoomType =
+  | 'kitchen'
   | 'living'
-  | 'dormitorio'
-  | 'comedor'
-  | 'oficina'
-  | 'cocina'
-  | 'otro';
+  | 'bedroom'
+  | 'dining'
+  | 'bathroom'
+  | 'office'
+  | 'other';
+
+export type ProjectStatus = 'draft' | 'active' | 'completed' | 'archived';

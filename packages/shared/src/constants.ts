@@ -1,16 +1,26 @@
 export const PRODUCT_CATEGORIES = [
-  'sofa',
-  'mesa',
-  'silla',
-  'estanteria',
-  'cama',
-  'escritorio',
-  'otro',
+  'cabinet',
+  'countertop',
+  'table',
+  'chair',
+  'shelf',
+  'wardrobe',
+  'accessory',
 ] as const;
 
-export const ROOM_TYPES = ['living', 'dormitorio', 'comedor', 'oficina', 'cocina', 'otro'] as const;
+export const ROOM_TYPES = [
+  'kitchen',
+  'living',
+  'bedroom',
+  'dining',
+  'bathroom',
+  'office',
+  'other',
+] as const;
 
 export const USER_ROLES = ['client', 'vendor', 'admin'] as const;
+
+export const PROJECT_STATUSES = ['draft', 'active', 'completed', 'archived'] as const;
 
 export const BRAND_COLORS = {
   red: '#D42B2B',

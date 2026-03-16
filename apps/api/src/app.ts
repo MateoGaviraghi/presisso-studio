@@ -2,9 +2,13 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
-import { env } from './config/env';
-import { errorHandler } from './middleware/error-handler';
-import { authRoutes } from './routes/auth.routes';
+import { env } from './config/env.js';
+import { errorHandler } from './middleware/error-handler.js';
+import { authRoutes } from './routes/auth.routes.js';
+import { productRoutes } from './routes/product.routes.js';
+import { projectRoutes } from './routes/project.routes.js';
+import { uploadRoutes } from './routes/upload.routes.js';
+import { pdfRoutes } from './routes/pdf.routes.js';
 
 export async function buildApp() {
   const app = Fastify({
@@ -35,11 +39,11 @@ export async function buildApp() {
 
   // Routes
   await app.register(authRoutes, { prefix: '/api/auth' });
-  // await app.register(projectRoutes, { prefix: '/api/projects' });
-  // await app.register(productRoutes, { prefix: '/api/products' });
+  await app.register(productRoutes, { prefix: '/api/products' });
+  await app.register(projectRoutes, { prefix: '/api/projects' });
+  await app.register(uploadRoutes, { prefix: '/api/upload' });
+  await app.register(pdfRoutes, { prefix: '/api/pdf' });
   // await app.register(chatRoutes, { prefix: '/api/chat' });
-  // await app.register(pdfRoutes, { prefix: '/api/pdf' });
-  // await app.register(uploadRoutes, { prefix: '/api/upload' });
 
   return app;
 }
