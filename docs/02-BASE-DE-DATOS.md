@@ -3,6 +3,7 @@
 > **Sprint**: 1 (Día 2-3)
 > **Dependencias**: `01-SETUP-ENTORNO.md` completado
 > **Resultado**: Schema completo con migraciones y seeds funcionando
+> **Skills a leer antes de implementar**: `neon-drizzle`, `neon-postgres`, `supabase-postgres-best-practices`
 
 ---
 
@@ -52,8 +53,18 @@ export type Database = typeof db;
 ```typescript
 // apps/api/src/db/schema.ts
 import {
-  pgTable, uuid, varchar, text, timestamp, boolean,
-  integer, decimal, jsonb, pgEnum, uniqueIndex, index,
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  timestamp,
+  boolean,
+  integer,
+  decimal,
+  jsonb,
+  pgEnum,
+  uniqueIndex,
+  index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -62,155 +73,206 @@ import { relations } from 'drizzle-orm';
 // ============================================================
 
 export const userRoleEnum = pgEnum('user_role', ['client', 'vendor', 'admin']);
-export const projectStatusEnum = pgEnum('project_status', ['draft', 'active', 'completed', 'archived']);
-export const roomTypeEnum = pgEnum('room_type', ['kitchen', 'living', 'bedroom', 'dining', 'bathroom', 'office', 'other']);
-export const productCategoryEnum = pgEnum('product_category', ['cabinet', 'countertop', 'table', 'chair', 'shelf', 'wardrobe', 'accessory']);
+export const projectStatusEnum = pgEnum('project_status', [
+  'draft',
+  'active',
+  'completed',
+  'archived',
+]);
+export const roomTypeEnum = pgEnum('room_type', [
+  'kitchen',
+  'living',
+  'bedroom',
+  'dining',
+  'bathroom',
+  'office',
+  'other',
+]);
+export const productCategoryEnum = pgEnum('product_category', [
+  'cabinet',
+  'countertop',
+  'table',
+  'chair',
+  'shelf',
+  'wardrobe',
+  'accessory',
+]);
 
 // ============================================================
 // USERS
 // ============================================================
 
-export const users = pgTable('users', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  email: varchar('email', { length: 255 }).notNull(),
-  passwordHash: varchar('password_hash', { length: 255 }), // null si login con Google
-  name: varchar('name', { length: 255 }).notNull(),
-  phone: varchar('phone', { length: 50 }),
-  avatarUrl: text('avatar_url'),
-  role: userRoleEnum('role').notNull().default('client'),
-  googleId: varchar('google_id', { length: 255 }),
-  isActive: boolean('is_active').notNull().default(true),
-  lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-}, (table) => ({
-  emailIdx: uniqueIndex('users_email_idx').on(table.email),
-  googleIdx: index('users_google_id_idx').on(table.googleId),
-  roleIdx: index('users_role_idx').on(table.role),
-}));
+export const users = pgTable(
+  'users',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    email: varchar('email', { length: 255 }).notNull(),
+    passwordHash: varchar('password_hash', { length: 255 }), // null si login con Google
+    name: varchar('name', { length: 255 }).notNull(),
+    phone: varchar('phone', { length: 50 }),
+    avatarUrl: text('avatar_url'),
+    role: userRoleEnum('role').notNull().default('client'),
+    googleId: varchar('google_id', { length: 255 }),
+    isActive: boolean('is_active').notNull().default(true),
+    lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    emailIdx: uniqueIndex('users_email_idx').on(table.email),
+    googleIdx: index('users_google_id_idx').on(table.googleId),
+    roleIdx: index('users_role_idx').on(table.role),
+  }),
+);
 
 // ============================================================
 // PRODUCTS (Catálogo de muebles Presisso)
 // ============================================================
 
-export const products = pgTable('products', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  sku: varchar('sku', { length: 50 }).notNull(),
-  name: varchar('name', { length: 255 }).notNull(),
-  description: text('description'),
-  category: productCategoryEnum('category').notNull(),
-  roomType: roomTypeEnum('room_type').notNull(),
-  line: varchar('line', { length: 100 }), // Línea de producto (ej: "Minimal", "Premium")
+export const products = pgTable(
+  'products',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    sku: varchar('sku', { length: 50 }).notNull(),
+    name: varchar('name', { length: 255 }).notNull(),
+    description: text('description'),
+    category: productCategoryEnum('category').notNull(),
+    roomType: roomTypeEnum('room_type').notNull(),
+    line: varchar('line', { length: 100 }), // Línea de producto (ej: "Minimal", "Premium")
 
-  // Dimensiones en centímetros
-  widthCm: decimal('width_cm', { precision: 8, scale: 2 }).notNull(),
-  heightCm: decimal('height_cm', { precision: 8, scale: 2 }).notNull(),
-  depthCm: decimal('depth_cm', { precision: 8, scale: 2 }).notNull(),
+    // Dimensiones en centímetros
+    widthCm: decimal('width_cm', { precision: 8, scale: 2 }).notNull(),
+    heightCm: decimal('height_cm', { precision: 8, scale: 2 }).notNull(),
+    depthCm: decimal('depth_cm', { precision: 8, scale: 2 }).notNull(),
 
-  // Precio de referencia (no es precio final)
-  priceArs: decimal('price_ars', { precision: 12, scale: 2 }),
-  priceUsd: decimal('price_usd', { precision: 10, scale: 2 }),
+    // Precio de referencia (no es precio final)
+    priceArs: decimal('price_ars', { precision: 12, scale: 2 }),
+    priceUsd: decimal('price_usd', { precision: 10, scale: 2 }),
 
-  // Assets 3D
-  modelUrl: text('model_url').notNull(),        // URL al archivo GLB en S3/CDN
-  thumbnailUrl: text('thumbnail_url'),           // Imagen de preview
-  modelSizeBytes: integer('model_size_bytes'),   // Tamaño del GLB para lazy loading
+    // Assets 3D
+    modelUrl: text('model_url').notNull(), // URL al archivo GLB en S3/CDN
+    thumbnailUrl: text('thumbnail_url'), // Imagen de preview
+    modelSizeBytes: integer('model_size_bytes'), // Tamaño del GLB para lazy loading
 
-  // Materiales disponibles
-  materials: jsonb('materials').$type<ProductMaterial[]>().default([]),
+    // Materiales disponibles
+    materials: jsonb('materials').$type<ProductMaterial[]>().default([]),
 
-  isActive: boolean('is_active').notNull().default(true),
-  sortOrder: integer('sort_order').notNull().default(0),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-}, (table) => ({
-  skuIdx: uniqueIndex('products_sku_idx').on(table.sku),
-  categoryIdx: index('products_category_idx').on(table.category),
-  roomTypeIdx: index('products_room_type_idx').on(table.roomType),
-  activeIdx: index('products_active_idx').on(table.isActive),
-}));
+    isActive: boolean('is_active').notNull().default(true),
+    sortOrder: integer('sort_order').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    skuIdx: uniqueIndex('products_sku_idx').on(table.sku),
+    categoryIdx: index('products_category_idx').on(table.category),
+    roomTypeIdx: index('products_room_type_idx').on(table.roomType),
+    activeIdx: index('products_active_idx').on(table.isActive),
+  }),
+);
 
 // ============================================================
 // PROJECTS (Configuraciones del cliente)
 // ============================================================
 
-export const projects = pgTable('projects', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  vendorId: uuid('vendor_id').references(() => users.id), // Vendedor asignado (opcional)
+export const projects = pgTable(
+  'projects',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    vendorId: uuid('vendor_id').references(() => users.id), // Vendedor asignado (opcional)
 
-  name: varchar('name', { length: 255 }).notNull().default('Mi Proyecto'),
-  status: projectStatusEnum('status').notNull().default('draft'),
-  roomType: roomTypeEnum('room_type').notNull().default('kitchen'),
+    name: varchar('name', { length: 255 }).notNull().default('Mi Proyecto'),
+    status: projectStatusEnum('status').notNull().default('draft'),
+    roomType: roomTypeEnum('room_type').notNull().default('kitchen'),
 
-  // Medidas del espacio (en cm)
-  roomWidthCm: decimal('room_width_cm', { precision: 8, scale: 2 }),
-  roomHeightCm: decimal('room_height_cm', { precision: 8, scale: 2 }),
-  roomDepthCm: decimal('room_depth_cm', { precision: 8, scale: 2 }),
+    // Medidas del espacio (en cm)
+    roomWidthCm: decimal('room_width_cm', { precision: 8, scale: 2 }),
+    roomHeightCm: decimal('room_height_cm', { precision: 8, scale: 2 }),
+    roomDepthCm: decimal('room_depth_cm', { precision: 8, scale: 2 }),
 
-  // Foto del espacio
-  backgroundImageUrl: text('background_image_url'),
+    // Foto del espacio
+    backgroundImageUrl: text('background_image_url'),
 
-  // Estado del editor serializado (posiciones, rotaciones, escala de cada item)
-  editorState: jsonb('editor_state').$type<EditorState>(),
+    // Estado del editor serializado (posiciones, rotaciones, escala de cada item)
+    editorState: jsonb('editor_state').$type<EditorState>(),
 
-  // Notas del vendedor
-  vendorNotes: text('vendor_notes'),
+    // Notas del vendedor
+    vendorNotes: text('vendor_notes'),
 
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-}, (table) => ({
-  userIdx: index('projects_user_id_idx').on(table.userId),
-  vendorIdx: index('projects_vendor_id_idx').on(table.vendorId),
-  statusIdx: index('projects_status_idx').on(table.status),
-}));
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    userIdx: index('projects_user_id_idx').on(table.userId),
+    vendorIdx: index('projects_vendor_id_idx').on(table.vendorId),
+    statusIdx: index('projects_status_idx').on(table.status),
+  }),
+);
 
 // ============================================================
 // PROJECT ITEMS (Muebles colocados en un proyecto)
 // ============================================================
 
-export const projectItems = pgTable('project_items', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
-  productId: uuid('product_id').notNull().references(() => products.id),
+export const projectItems = pgTable(
+  'project_items',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    productId: uuid('product_id')
+      .notNull()
+      .references(() => products.id),
 
-  // Transform 3D (posición en la escena)
-  positionX: decimal('position_x', { precision: 10, scale: 4 }).notNull().default('0'),
-  positionY: decimal('position_y', { precision: 10, scale: 4 }).notNull().default('0'),
-  positionZ: decimal('position_z', { precision: 10, scale: 4 }).notNull().default('0'),
-  rotationY: decimal('rotation_y', { precision: 10, scale: 4 }).notNull().default('0'), // Rotación en Y (grados)
-  scale: decimal('scale', { precision: 6, scale: 4 }).notNull().default('1'),
+    // Transform 3D (posición en la escena)
+    positionX: decimal('position_x', { precision: 10, scale: 4 }).notNull().default('0'),
+    positionY: decimal('position_y', { precision: 10, scale: 4 }).notNull().default('0'),
+    positionZ: decimal('position_z', { precision: 10, scale: 4 }).notNull().default('0'),
+    rotationY: decimal('rotation_y', { precision: 10, scale: 4 }).notNull().default('0'), // Rotación en Y (grados)
+    scale: decimal('scale', { precision: 6, scale: 4 }).notNull().default('1'),
 
-  // Material seleccionado
-  selectedMaterialId: varchar('selected_material_id', { length: 100 }),
+    // Material seleccionado
+    selectedMaterialId: varchar('selected_material_id', { length: 100 }),
 
-  sortOrder: integer('sort_order').notNull().default(0),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-}, (table) => ({
-  projectIdx: index('project_items_project_id_idx').on(table.projectId),
-}));
+    sortOrder: integer('sort_order').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    projectIdx: index('project_items_project_id_idx').on(table.projectId),
+  }),
+);
 
 // ============================================================
 // CHAT MESSAGES (Historial del asistente IA)
 // ============================================================
 
-export const chatMessages = pgTable('chat_messages', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
-  userId: uuid('user_id').notNull().references(() => users.id),
+export const chatMessages = pgTable(
+  'chat_messages',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
 
-  role: varchar('role', { length: 20 }).notNull(), // 'user' | 'assistant'
-  content: text('content').notNull(),
+    role: varchar('role', { length: 20 }).notNull(), // 'user' | 'assistant'
+    content: text('content').notNull(),
 
-  // Metadata de la respuesta de Claude
-  modelUsed: varchar('model_used', { length: 100 }),
-  tokensUsed: integer('tokens_used'),
+    // Metadata de la respuesta de Claude
+    modelUsed: varchar('model_used', { length: 100 }),
+    tokensUsed: integer('tokens_used'),
 
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-}, (table) => ({
-  projectIdx: index('chat_messages_project_id_idx').on(table.projectId),
-  createdAtIdx: index('chat_messages_created_at_idx').on(table.createdAt),
-}));
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    projectIdx: index('chat_messages_project_id_idx').on(table.projectId),
+    createdAtIdx: index('chat_messages_created_at_idx').on(table.createdAt),
+  }),
+);
 
 // ============================================================
 // RELATIONS
@@ -227,7 +289,11 @@ export const productsRelations = relations(products, ({ many }) => ({
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   user: one(users, { fields: [projects.userId], references: [users.id] }),
-  vendor: one(users, { fields: [projects.vendorId], references: [users.id], relationName: 'vendor' }),
+  vendor: one(users, {
+    fields: [projects.vendorId],
+    references: [users.id],
+    relationName: 'vendor',
+  }),
   items: many(projectItems),
   chatMessages: many(chatMessages),
 }));
@@ -248,12 +314,12 @@ export const chatMessagesRelations = relations(chatMessages, ({ one }) => ({
 
 export interface ProductMaterial {
   id: string;
-  name: string;           // "Roble Natural", "Laqueado Blanco"
-  type: string;           // "wood", "lacquer", "marble", "granite"
-  colorHex: string;       // "#8B7355"
-  textureUrl?: string;    // URL a textura PBR en CDN
-  roughness?: number;     // 0-1 para material PBR
-  metalness?: number;     // 0-1 para material PBR
+  name: string; // "Roble Natural", "Laqueado Blanco"
+  type: string; // "wood", "lacquer", "marble", "granite"
+  colorHex: string; // "#8B7355"
+  textureUrl?: string; // URL a textura PBR en CDN
+  roughness?: number; // 0-1 para material PBR
+  metalness?: number; // 0-1 para material PBR
   priceModifier?: number; // Multiplicador de precio (1.0 = sin cambio)
 }
 
@@ -322,26 +388,35 @@ async function seed() {
   // === USUARIOS ===
   const passwordHash = await bcrypt.hash('presisso2026', 12);
 
-  const [adminUser] = await db.insert(users).values({
-    email: 'admin@presisso.com',
-    passwordHash,
-    name: 'Admin Presisso',
-    role: 'admin',
-  }).returning();
+  const [adminUser] = await db
+    .insert(users)
+    .values({
+      email: 'admin@presisso.com',
+      passwordHash,
+      name: 'Admin Presisso',
+      role: 'admin',
+    })
+    .returning();
 
-  const [vendorUser] = await db.insert(users).values({
-    email: 'vendedor@presisso.com',
-    passwordHash,
-    name: 'Vendedor Demo',
-    role: 'vendor',
-  }).returning();
+  const [vendorUser] = await db
+    .insert(users)
+    .values({
+      email: 'vendedor@presisso.com',
+      passwordHash,
+      name: 'Vendedor Demo',
+      role: 'vendor',
+    })
+    .returning();
 
-  const [clientUser] = await db.insert(users).values({
-    email: 'cliente@demo.com',
-    passwordHash,
-    name: 'Cliente Demo',
-    role: 'client',
-  }).returning();
+  const [clientUser] = await db
+    .insert(users)
+    .values({
+      email: 'cliente@demo.com',
+      passwordHash,
+      name: 'Cliente Demo',
+      role: 'client',
+    })
+    .returning();
 
   // === PRODUCTOS (3-5 para la expo) ===
   // NOTA: Las URLs de modelos GLB se actualizan cuando se suben a S3
@@ -350,7 +425,8 @@ async function seed() {
     {
       sku: 'PRE-KC-001',
       name: 'Cocina Línea Minimal',
-      description: 'Módulo de cocina bajo mesada en melamina premium. Diseño minimalista con tiradores ocultos.',
+      description:
+        'Módulo de cocina bajo mesada en melamina premium. Diseño minimalista con tiradores ocultos.',
       category: 'cabinet',
       roomType: 'kitchen',
       line: 'Minimal',
@@ -361,9 +437,30 @@ async function seed() {
       modelUrl: 'https://CDN_URL/models/cocina-minimal-001.glb',
       thumbnailUrl: 'https://CDN_URL/thumbnails/cocina-minimal-001.webp',
       materials: [
-        { id: 'mat-roble', name: 'Roble Natural', type: 'wood', colorHex: '#8B7355', roughness: 0.7, metalness: 0 },
-        { id: 'mat-blanco', name: 'Laqueado Blanco', type: 'lacquer', colorHex: '#F5F5F0', roughness: 0.3, metalness: 0.1 },
-        { id: 'mat-negro', name: 'Laqueado Negro', type: 'lacquer', colorHex: '#1A1A1A', roughness: 0.2, metalness: 0.15 },
+        {
+          id: 'mat-roble',
+          name: 'Roble Natural',
+          type: 'wood',
+          colorHex: '#8B7355',
+          roughness: 0.7,
+          metalness: 0,
+        },
+        {
+          id: 'mat-blanco',
+          name: 'Laqueado Blanco',
+          type: 'lacquer',
+          colorHex: '#F5F5F0',
+          roughness: 0.3,
+          metalness: 0.1,
+        },
+        {
+          id: 'mat-negro',
+          name: 'Laqueado Negro',
+          type: 'lacquer',
+          colorHex: '#1A1A1A',
+          roughness: 0.2,
+          metalness: 0.15,
+        },
       ],
       sortOrder: 1,
     },
@@ -381,15 +478,30 @@ async function seed() {
       modelUrl: 'https://CDN_URL/models/alacena-premium-002.glb',
       thumbnailUrl: 'https://CDN_URL/thumbnails/alacena-premium-002.webp',
       materials: [
-        { id: 'mat-roble', name: 'Roble Natural', type: 'wood', colorHex: '#8B7355', roughness: 0.7, metalness: 0 },
-        { id: 'mat-gris', name: 'Gris Topo', type: 'lacquer', colorHex: '#8B8680', roughness: 0.4, metalness: 0.05 },
+        {
+          id: 'mat-roble',
+          name: 'Roble Natural',
+          type: 'wood',
+          colorHex: '#8B7355',
+          roughness: 0.7,
+          metalness: 0,
+        },
+        {
+          id: 'mat-gris',
+          name: 'Gris Topo',
+          type: 'lacquer',
+          colorHex: '#8B8680',
+          roughness: 0.4,
+          metalness: 0.05,
+        },
       ],
       sortOrder: 2,
     },
     {
       sku: 'PRE-CT-001',
       name: 'Mesada Isla Central',
-      description: 'Isla de cocina con mesada de cuarzo. Incluye espacio de almacenamiento y barra de desayuno.',
+      description:
+        'Isla de cocina con mesada de cuarzo. Incluye espacio de almacenamiento y barra de desayuno.',
       category: 'countertop',
       roomType: 'kitchen',
       line: 'Premium',
@@ -400,15 +512,30 @@ async function seed() {
       modelUrl: 'https://CDN_URL/models/isla-central-001.glb',
       thumbnailUrl: 'https://CDN_URL/thumbnails/isla-central-001.webp',
       materials: [
-        { id: 'mat-cuarzo-bl', name: 'Cuarzo Blanco', type: 'marble', colorHex: '#F0EDE8', roughness: 0.15, metalness: 0.02 },
-        { id: 'mat-granito', name: 'Granito Negro', type: 'granite', colorHex: '#2C2C2A', roughness: 0.25, metalness: 0.05 },
+        {
+          id: 'mat-cuarzo-bl',
+          name: 'Cuarzo Blanco',
+          type: 'marble',
+          colorHex: '#F0EDE8',
+          roughness: 0.15,
+          metalness: 0.02,
+        },
+        {
+          id: 'mat-granito',
+          name: 'Granito Negro',
+          type: 'granite',
+          colorHex: '#2C2C2A',
+          roughness: 0.25,
+          metalness: 0.05,
+        },
       ],
       sortOrder: 3,
     },
     {
       sku: 'PRE-LV-001',
       name: 'Mueble TV Living',
-      description: 'Rack de TV con paneles flotantes y cajones soft-close. Capacidad para TV hasta 75".',
+      description:
+        'Rack de TV con paneles flotantes y cajones soft-close. Capacidad para TV hasta 75".',
       category: 'shelf',
       roomType: 'living',
       line: 'Minimal',
@@ -419,15 +546,30 @@ async function seed() {
       modelUrl: 'https://CDN_URL/models/rack-tv-001.glb',
       thumbnailUrl: 'https://CDN_URL/thumbnails/rack-tv-001.webp',
       materials: [
-        { id: 'mat-roble', name: 'Roble Natural', type: 'wood', colorHex: '#8B7355', roughness: 0.7, metalness: 0 },
-        { id: 'mat-nogal', name: 'Nogal Oscuro', type: 'wood', colorHex: '#4A3728', roughness: 0.65, metalness: 0 },
+        {
+          id: 'mat-roble',
+          name: 'Roble Natural',
+          type: 'wood',
+          colorHex: '#8B7355',
+          roughness: 0.7,
+          metalness: 0,
+        },
+        {
+          id: 'mat-nogal',
+          name: 'Nogal Oscuro',
+          type: 'wood',
+          colorHex: '#4A3728',
+          roughness: 0.65,
+          metalness: 0,
+        },
       ],
       sortOrder: 4,
     },
     {
       sku: 'PRE-WR-001',
       name: 'Vestidor Walk-in',
-      description: 'Sistema de vestidor modular con barras, estantes y cajones. Iluminación LED con sensor.',
+      description:
+        'Sistema de vestidor modular con barras, estantes y cajones. Iluminación LED con sensor.',
       category: 'wardrobe',
       roomType: 'bedroom',
       line: 'Premium',
@@ -438,8 +580,22 @@ async function seed() {
       modelUrl: 'https://CDN_URL/models/vestidor-001.glb',
       thumbnailUrl: 'https://CDN_URL/thumbnails/vestidor-001.webp',
       materials: [
-        { id: 'mat-blanco', name: 'Laqueado Blanco', type: 'lacquer', colorHex: '#F5F5F0', roughness: 0.3, metalness: 0.1 },
-        { id: 'mat-lino', name: 'Lino Natural', type: 'wood', colorHex: '#C4B99A', roughness: 0.8, metalness: 0 },
+        {
+          id: 'mat-blanco',
+          name: 'Laqueado Blanco',
+          type: 'lacquer',
+          colorHex: '#F5F5F0',
+          roughness: 0.3,
+          metalness: 0.1,
+        },
+        {
+          id: 'mat-lino',
+          name: 'Lino Natural',
+          type: 'wood',
+          colorHex: '#C4B99A',
+          roughness: 0.8,
+          metalness: 0,
+        },
       ],
       sortOrder: 5,
     },

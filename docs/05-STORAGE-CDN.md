@@ -3,6 +3,7 @@
 > **Sprint**: 1 (Día 3-5)
 > **Dependencias**: `01-SETUP-ENTORNO.md`
 > **Resultado**: S3 bucket configurado, CDN activo, pipeline de modelos 3D funcional
+> **Skills a leer antes de implementar**: Ningún skill específico (configuración de infra AWS)
 
 ---
 
@@ -78,18 +79,16 @@ const s3 = new S3Client({
 
 const BUCKET = env.AWS_S3_BUCKET;
 
-export async function uploadFile(
-  key: string,
-  body: Buffer,
-  contentType: string,
-): Promise<string> {
-  await s3.send(new PutObjectCommand({
-    Bucket: BUCKET,
-    Key: key,
-    Body: body,
-    ContentType: contentType,
-    CacheControl: 'public, max-age=31536000, immutable', // 1 año (assets inmutables)
-  }));
+export async function uploadFile(key: string, body: Buffer, contentType: string): Promise<string> {
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: BUCKET,
+      Key: key,
+      Body: body,
+      ContentType: contentType,
+      CacheControl: 'public, max-age=31536000, immutable', // 1 año (assets inmutables)
+    }),
+  );
 
   return `${env.AWS_CLOUDFRONT_URL}/${key}`;
 }
@@ -230,6 +229,7 @@ ls -lh output.glb
 ```
 
 **Targets de tamaño por modelo:**
+
 - Mueble simple (silla, estante): < 2MB
 - Mueble mediano (cocina, rack): < 5MB
 - Mueble complejo (vestidor, isla): < 8MB

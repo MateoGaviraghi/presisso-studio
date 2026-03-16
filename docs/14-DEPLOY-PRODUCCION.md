@@ -3,17 +3,18 @@
 > **Sprint**: 3 (Día 22-24)
 > **Dependencias**: Todo lo anterior
 > **Resultado**: Sistema deployado con dominio custom, SSL, CI/CD automático
+> **Skills a leer antes de implementar**: `webapp-testing`
 
 ---
 
 ## 1. Estrategia de Deploy
 
-| Componente | Plataforma | Justificación |
-|-----------|-----------|---------------|
-| Frontend (React) | **Vercel** | CDN global, deploy automático, preview por PR |
-| Backend (Fastify) | **Railway** | Soporte Node.js + PostgreSQL integrado, Puppeteer compatible |
-| PostgreSQL | **Railway** (add-on) | Managed DB, backups automáticos |
-| Assets 3D | **AWS S3 + CloudFront** | CDN para carga rápida de modelos GLB |
+| Componente        | Plataforma              | Justificación                                                |
+| ----------------- | ----------------------- | ------------------------------------------------------------ |
+| Frontend (React)  | **Vercel**              | CDN global, deploy automático, preview por PR                |
+| Backend (Fastify) | **Railway**             | Soporte Node.js + PostgreSQL integrado, Puppeteer compatible |
+| PostgreSQL        | **Railway** (add-on)    | Managed DB, backups automáticos                              |
+| Assets 3D         | **AWS S3 + CloudFront** | CDN para carga rápida de modelos GLB                         |
 
 ---
 
@@ -114,9 +115,7 @@ FRONTEND_URL=https://presisso.studio
   "outputDirectory": "dist",
   "installCommand": "cd ../.. && pnpm install",
   "framework": "vite",
-  "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
-  ]
+  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
 }
 ```
 
@@ -133,11 +132,13 @@ VITE_CLOUDFRONT_URL=https://d1234567890.cloudfront.net
 ## 4. Dominio Custom + SSL
 
 ### Setup recomendado:
+
 - `presisso.studio` → Vercel (frontend)
 - `api.presisso.studio` → Railway (backend)
 - `cdn.presisso.studio` → CloudFront (assets 3D)
 
 ### DNS Records:
+
 ```
 presisso.studio         A      76.76.21.21 (Vercel)
 api.presisso.studio     CNAME  <tu-app>.up.railway.app
@@ -220,17 +221,20 @@ jobs:
 ## 6. Monitoring Básico
 
 ### Health check endpoint (ya implementado):
+
 ```
 GET https://api.presisso.studio/api/health
 → { "status": "ok", "timestamp": "2026-03-16T..." }
 ```
 
 ### Railway logs:
+
 ```bash
 railway logs --follow
 ```
 
 ### Uptime check gratuito:
+
 Configurar UptimeRobot (free tier) para `https://api.presisso.studio/api/health` cada 5 minutos.
 
 ---

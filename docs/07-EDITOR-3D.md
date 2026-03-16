@@ -3,6 +3,7 @@
 > **Sprint**: 1-2 (Día 5-11)
 > **Dependencias**: `06-FRONTEND-BASE.md`, `05-STORAGE-CDN.md`
 > **Resultado**: Scene 3D funcional con carga de modelos GLB, cámara interactiva, iluminación PBR y grid
+> **Skills a leer antes de implementar**: `frontend-design`, `vercel-react-best-practices`, `web-design-guidelines`, `webapp-testing`
 
 ---
 
@@ -15,13 +16,13 @@ pnpm add @babylonjs/core @babylonjs/loaders @babylonjs/materials @babylonjs/gui 
 
 **Módulos de Babylon.js y para qué sirven:**
 
-| Módulo | Uso en Presisso |
-|--------|-----------------|
-| `@babylonjs/core` | Engine, Scene, Camera, Lights, Mesh |
-| `@babylonjs/loaders` | Carga de archivos GLTF/GLB |
-| `@babylonjs/materials` | Materiales PBR, GridMaterial |
-| `@babylonjs/gui` | UI superpuesta en la escena 3D (labels, botones) |
-| `@babylonjs/inspector` | Debug tool (solo en dev) |
+| Módulo                 | Uso en Presisso                                  |
+| ---------------------- | ------------------------------------------------ |
+| `@babylonjs/core`      | Engine, Scene, Camera, Lights, Mesh              |
+| `@babylonjs/loaders`   | Carga de archivos GLTF/GLB                       |
+| `@babylonjs/materials` | Materiales PBR, GridMaterial                     |
+| `@babylonjs/gui`       | UI superpuesta en la escena 3D (labels, botones) |
+| `@babylonjs/inspector` | Debug tool (solo en dev)                         |
 
 ---
 
@@ -48,7 +49,7 @@ export function SceneCanvas({ className }: SceneCanvasProps) {
 
     // Crear engine con antialiasing
     const engine = new Engine(canvas, true, {
-      preserveDrawingBuffer: true,  // Necesario para screenshot → PDF
+      preserveDrawingBuffer: true, // Necesario para screenshot → PDF
       stencil: true,
       antialias: true,
     });
@@ -98,7 +99,7 @@ import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { GridMaterial } from '@babylonjs/materials/grid/gridMaterial';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
-import '@babylonjs/loaders/glTF';  // IMPORTANTE: registrar el loader de GLTF
+import '@babylonjs/loaders/glTF'; // IMPORTANTE: registrar el loader de GLTF
 
 import { useEditorStore } from '../stores/editor-store';
 
@@ -111,36 +112,28 @@ export function createEditorScene(engine: Engine, canvas: HTMLCanvasElement) {
   // === CÁMARA ===
   const camera = new ArcRotateCamera(
     'editorCamera',
-    -Math.PI / 4,    // alpha (rotación horizontal)
-    Math.PI / 3,     // beta (elevación)
-    8,               // radius (distancia)
+    -Math.PI / 4, // alpha (rotación horizontal)
+    Math.PI / 3, // beta (elevación)
+    8, // radius (distancia)
     new Vector3(0, 1, 0), // target (centro de la escena)
     scene,
   );
-  camera.lowerBetaLimit = 0.1;           // No dejar que baje debajo del piso
+  camera.lowerBetaLimit = 0.1; // No dejar que baje debajo del piso
   camera.upperBetaLimit = Math.PI / 2.2; // No invertir
-  camera.lowerRadiusLimit = 2;           // Zoom mínimo
-  camera.upperRadiusLimit = 20;          // Zoom máximo
-  camera.wheelDeltaPercentage = 0.01;    // Velocidad de zoom
-  camera.panningSensibility = 100;       // Velocidad de pan
+  camera.lowerRadiusLimit = 2; // Zoom mínimo
+  camera.upperRadiusLimit = 20; // Zoom máximo
+  camera.wheelDeltaPercentage = 0.01; // Velocidad de zoom
+  camera.panningSensibility = 100; // Velocidad de pan
   camera.attachControl(canvas, true);
 
   // === ILUMINACIÓN PBR ===
   // Luz ambiental (llena sombras suavemente)
-  const ambientLight = new HemisphericLight(
-    'ambientLight',
-    new Vector3(0, 1, 0),
-    scene,
-  );
+  const ambientLight = new HemisphericLight('ambientLight', new Vector3(0, 1, 0), scene);
   ambientLight.intensity = 0.6;
   ambientLight.groundColor = new Color3(0.8, 0.78, 0.75);
 
   // Luz direccional principal (sol simulado)
-  const dirLight = new DirectionalLight(
-    'dirLight',
-    new Vector3(-1, -2, -1).normalize(),
-    scene,
-  );
+  const dirLight = new DirectionalLight('dirLight', new Vector3(-1, -2, -1).normalize(), scene);
   dirLight.position = new Vector3(5, 10, 5);
   dirLight.intensity = 0.8;
 
@@ -151,15 +144,19 @@ export function createEditorScene(engine: Engine, canvas: HTMLCanvasElement) {
   shadowGen.setDarkness(0.4);
 
   // === GRID DEL PISO ===
-  const ground = MeshBuilder.CreateGround('ground', {
-    width: 20,
-    height: 20,
-    subdivisions: 1,
-  }, scene);
+  const ground = MeshBuilder.CreateGround(
+    'ground',
+    {
+      width: 20,
+      height: 20,
+      subdivisions: 1,
+    },
+    scene,
+  );
   ground.receiveShadows = true;
 
   const gridMaterial = new GridMaterial('gridMat', scene);
-  gridMaterial.majorUnitFrequency = 1;     // Línea gruesa cada 1m
+  gridMaterial.majorUnitFrequency = 1; // Línea gruesa cada 1m
   gridMaterial.minorUnitVisibility = 0.3;
   gridMaterial.gridRatio = 1;
   gridMaterial.backFaceCulling = false;
@@ -188,7 +185,7 @@ export function createEditorScene(engine: Engine, canvas: HTMLCanvasElement) {
     root.position = position;
 
     // Habilitar sombras en todos los meshes hijos
-    result.meshes.forEach(mesh => {
+    result.meshes.forEach((mesh) => {
       if (mesh !== root) {
         shadowGen.addShadowCaster(mesh);
         mesh.receiveShadows = true;
@@ -257,51 +254,53 @@ import { api } from '../services/api-client';
 export function useEditor() {
   const { addItem, removeItem, items, projectId } = useEditorStore();
 
-  const addProductToScene = useCallback(async (product: {
-    id: string;
-    name: string;
-    modelUrl: string;
-  }) => {
-    const scene = (window as any).__editorScene;
-    if (!scene) return;
+  const addProductToScene = useCallback(
+    async (product: { id: string; name: string; modelUrl: string }) => {
+      const scene = (window as any).__editorScene;
+      if (!scene) return;
 
-    const itemId = crypto.randomUUID();
-    const position = new Vector3(0, 0, 0); // Centro de la escena
+      const itemId = crypto.randomUUID();
+      const position = new Vector3(0, 0, 0); // Centro de la escena
 
-    // Cargar modelo 3D
-    await scene.loadModel(itemId, product.modelUrl, position);
+      // Cargar modelo 3D
+      await scene.loadModel(itemId, product.modelUrl, position);
 
-    // Agregar al store
-    addItem({
-      id: itemId,
-      productId: product.id,
-      productName: product.name,
-      modelUrl: product.modelUrl,
-      position: { x: 0, y: 0, z: 0 },
-      rotationY: 0,
-      scale: 1,
-    });
-
-    // Persistir en backend
-    if (projectId) {
-      await api.post(`/projects/${projectId}/items`, {
+      // Agregar al store
+      addItem({
+        id: itemId,
         productId: product.id,
-        positionX: 0,
-        positionY: 0,
-        positionZ: 0,
+        productName: product.name,
+        modelUrl: product.modelUrl,
+        position: { x: 0, y: 0, z: 0 },
+        rotationY: 0,
+        scale: 1,
       });
-    }
-  }, [addItem, projectId]);
 
-  const removeProductFromScene = useCallback(async (itemId: string) => {
-    const scene = (window as any).__editorScene;
-    if (scene) scene.removeModel(itemId);
-    removeItem(itemId);
+      // Persistir en backend
+      if (projectId) {
+        await api.post(`/projects/${projectId}/items`, {
+          productId: product.id,
+          positionX: 0,
+          positionY: 0,
+          positionZ: 0,
+        });
+      }
+    },
+    [addItem, projectId],
+  );
 
-    if (projectId) {
-      await api.delete(`/projects/${projectId}/items/${itemId}`);
-    }
-  }, [removeItem, projectId]);
+  const removeProductFromScene = useCallback(
+    async (itemId: string) => {
+      const scene = (window as any).__editorScene;
+      if (scene) scene.removeModel(itemId);
+      removeItem(itemId);
+
+      if (projectId) {
+        await api.delete(`/projects/${projectId}/items/${itemId}`);
+      }
+    },
+    [removeItem, projectId],
+  );
 
   return { addProductToScene, removeProductFromScene, items };
 }
@@ -315,10 +314,14 @@ export function useEditor() {
 // En editor-scene.ts — agregar función:
 function setBackgroundImage(imageUrl: string): void {
   // Crear un plano grande detrás de la escena como fondo
-  const bgPlane = MeshBuilder.CreatePlane('backgroundPlane', {
-    width: 16,    // Ajustar según aspect ratio de la foto
-    height: 9,
-  }, scene);
+  const bgPlane = MeshBuilder.CreatePlane(
+    'backgroundPlane',
+    {
+      width: 16, // Ajustar según aspect ratio de la foto
+      height: 9,
+    },
+    scene,
+  );
   bgPlane.position = new Vector3(0, 4.5, 10); // Detrás del centro
   bgPlane.isPickable = false;
 

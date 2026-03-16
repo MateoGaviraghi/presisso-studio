@@ -3,6 +3,7 @@
 > **Sprint**: 1 (Día 1-2)
 > **Dependencias**: Ninguna — este es el punto de partida
 > **Resultado**: Monorepo funcional con frontend y backend corriendo en local
+> **Skills a leer antes de implementar**: `neon-postgres`, `neon-drizzle` (para config de DB en monorepo)
 
 ---
 

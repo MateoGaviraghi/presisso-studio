@@ -3,6 +3,7 @@
 > **Sprint**: 2 (Día 13-16)
 > **Dependencias**: `04-API-BACKEND.md`, `06-FRONTEND-BASE.md`
 > **Resultado**: Chat inteligente en el configurador que sugiere productos y guía al cliente
+> **Skills a leer antes de implementar**: `frontend-design`, `vercel-react-best-practices`, `web-design-guidelines`, `webapp-testing`
 
 ---
 

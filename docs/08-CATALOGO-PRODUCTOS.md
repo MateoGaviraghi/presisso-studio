@@ -3,6 +3,7 @@
 > **Sprint**: 1-2 (Día 7-10)
 > **Dependencias**: `04-API-BACKEND.md`, `06-FRONTEND-BASE.md`
 > **Resultado**: Grid de productos con filtros, mini-viewer 3D y acción de agregar al editor
+> **Skills a leer antes de implementar**: `frontend-design`, `vercel-react-best-practices`, `web-design-guidelines`, `webapp-testing`
 
 ---
 

@@ -3,6 +3,7 @@
 > **Sprint**: 2 (Día 12-16)
 > **Dependencias**: `07-EDITOR-3D.md`, `05-STORAGE-CDN.md`
 > **Resultado**: Experiencia AR en el navegador donde el cliente ve muebles reales en su espacio
+> **Skills a leer antes de implementar**: `frontend-design`, `vercel-react-best-practices`, `webapp-testing`
 
 ---
 

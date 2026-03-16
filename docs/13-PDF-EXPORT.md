@@ -3,6 +3,7 @@
 > **Sprint**: 3 (Día 16-19)
 > **Dependencias**: `04-API-BACKEND.md`, `07-EDITOR-3D.md`
 > **Resultado**: Propuesta comercial PDF con branding Presisso, screenshot del editor y lista de productos
+> **Skills a leer antes de implementar**: `pdf`, `frontend-design`, `webapp-testing`
 
 ---
 

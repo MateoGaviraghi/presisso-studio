@@ -3,6 +3,7 @@
 > **Sprint**: 1 (Día 2-4)
 > **Dependencias**: `01-SETUP-ENTORNO.md`, `02-BASE-DE-DATOS.md`
 > **Resultado**: Login/registro funcional con JWT y Google OAuth
+> **Skills a leer antes de implementar**: `neon-drizzle`, `neon-postgres`, `supabase-postgres-best-practices`
 
 ---
 
@@ -42,7 +43,7 @@ const issuer = 'presisso-studio';
 const audience = 'presisso-client';
 
 export interface JwtPayload {
-  sub: string;       // user id
+  sub: string; // user id
   email: string;
   role: 'client' | 'vendor' | 'admin';
 }
@@ -168,7 +169,6 @@ const loginSchema = z.object({
 });
 
 export async function authRoutes(app: FastifyInstance) {
-
   // ========== REGISTER ==========
   app.post('/register', async (request, reply) => {
     const body = registerSchema.parse(request.body);
@@ -182,18 +182,21 @@ export async function authRoutes(app: FastifyInstance) {
     }
 
     const passwordHash = await hashPassword(body.password);
-    const [user] = await db.insert(users).values({
-      email: body.email,
-      passwordHash,
-      name: body.name,
-      phone: body.phone,
-      role: 'client',
-    }).returning({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      role: users.role,
-    });
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: body.email,
+        passwordHash,
+        name: body.name,
+        phone: body.phone,
+        role: 'client',
+      })
+      .returning({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        role: users.role,
+      });
 
     const token = await signToken({ sub: user.id, email: user.email, role: user.role });
     return reply.status(201).send({ token, user });
@@ -222,7 +225,13 @@ export async function authRoutes(app: FastifyInstance) {
     const token = await signToken({ sub: user.id, email: user.email, role: user.role });
     return {
       token,
-      user: { id: user.id, email: user.email, name: user.name, role: user.role, avatarUrl: user.avatarUrl },
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        avatarUrl: user.avatarUrl,
+      },
     };
   });
 
@@ -276,19 +285,25 @@ export async function authRoutes(app: FastifyInstance) {
 
       if (user) {
         // Vincular Google ID al usuario existente
-        await db.update(users).set({
-          googleId: googleUser.id,
-          avatarUrl: googleUser.picture,
-        }).where(eq(users.id, user.id));
+        await db
+          .update(users)
+          .set({
+            googleId: googleUser.id,
+            avatarUrl: googleUser.picture,
+          })
+          .where(eq(users.id, user.id));
       } else {
         // Crear nuevo usuario
-        const [newUser] = await db.insert(users).values({
-          email: googleUser.email,
-          name: googleUser.name,
-          googleId: googleUser.id,
-          avatarUrl: googleUser.picture,
-          role: 'client',
-        }).returning();
+        const [newUser] = await db
+          .insert(users)
+          .values({
+            email: googleUser.email,
+            name: googleUser.name,
+            googleId: googleUser.id,
+            avatarUrl: googleUser.picture,
+            role: 'client',
+          })
+          .returning();
         user = newUser;
       }
     }
@@ -383,7 +398,9 @@ class ApiClient {
     return response.json();
   }
 
-  get<T>(path: string) { return this.fetch<T>(path); }
+  get<T>(path: string) {
+    return this.fetch<T>(path);
+  }
 
   post<T>(path: string, body: unknown) {
     return this.fetch<T>(path, { method: 'POST', body: JSON.stringify(body) });

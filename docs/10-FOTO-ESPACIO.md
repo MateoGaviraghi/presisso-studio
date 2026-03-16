@@ -3,6 +3,7 @@
 > **Sprint**: 2 (Día 10-12)
 > **Dependencias**: `07-EDITOR-3D.md`, `05-STORAGE-CDN.md`
 > **Resultado**: Cliente sube foto de su cocina/living y se usa como fondo del editor 3D
+> **Skills a leer antes de implementar**: `frontend-design`, `vercel-react-best-practices`, `webapp-testing`
 
 ---
 

@@ -3,6 +3,7 @@
 > **Sprint**: 1 (Día 5-8)
 > **Dependencias**: `01-SETUP-ENTORNO.md`, `04-API-BACKEND.md`
 > **Resultado**: SPA funcional con routing, auth context, layout principal y API client
+> **Skills a leer antes de implementar**: `frontend-design`, `vercel-react-best-practices`, `web-design-guidelines`, `webapp-testing`
 
 ---
 

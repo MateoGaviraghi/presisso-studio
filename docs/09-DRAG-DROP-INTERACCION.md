@@ -3,6 +3,7 @@
 > **Sprint**: 2 (Día 8-11)
 > **Dependencias**: `07-EDITOR-3D.md`
 > **Resultado**: Muebles movibles, rotables y escalables en la escena 3D con gizmos visuales
+> **Skills a leer antes de implementar**: `frontend-design`, `vercel-react-best-practices`, `webapp-testing`
 
 ---
 
@@ -43,7 +44,8 @@ export class InteractionManager {
 
     // Click para seleccionar
     scene.onPointerObservable.add((pointerInfo) => {
-      if (pointerInfo.type === 2) { // PointerUp
+      if (pointerInfo.type === 2) {
+        // PointerUp
         const pickResult = scene.pick(scene.pointerX, scene.pointerY);
         if (pickResult?.hit && pickResult.pickedMesh) {
           const root = this.findRootMesh(pickResult.pickedMesh);
@@ -73,7 +75,7 @@ export class InteractionManager {
     this.selectedMesh = mesh;
 
     // Highlight visual (borde dorado)
-    mesh.getChildMeshes().forEach(child => {
+    mesh.getChildMeshes().forEach((child) => {
       this.highlightLayer.addMesh(child, new Color3(0.77, 0.64, 0.35)); // Gold
     });
 
@@ -111,8 +113,8 @@ export class InteractionManager {
       this.highlightLayer.removeAllMeshes();
       // Remover drag behaviors
       this.selectedMesh.behaviors
-        .filter(b => b instanceof PointerDragBehavior)
-        .forEach(b => this.selectedMesh!.removeBehavior(b));
+        .filter((b) => b instanceof PointerDragBehavior)
+        .forEach((b) => this.selectedMesh!.removeBehavior(b));
       this.selectedMesh = null;
     }
     this.gizmoManager.attachToMesh(null);
@@ -187,13 +189,39 @@ interface Props {
 export function EditorToolbar(props: Props) {
   return (
     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-1 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-1.5 border border-black/5">
-      <ToolButton icon={<RotateCcw size={18} />} label="Rotar -45°" onClick={props.onRotateLeft} disabled={!props.hasSelection} />
-      <ToolButton icon={<RotateCw size={18} />} label="Rotar +45°" onClick={props.onRotateRight} disabled={!props.hasSelection} />
+      <ToolButton
+        icon={<RotateCcw size={18} />}
+        label="Rotar -45°"
+        onClick={props.onRotateLeft}
+        disabled={!props.hasSelection}
+      />
+      <ToolButton
+        icon={<RotateCw size={18} />}
+        label="Rotar +45°"
+        onClick={props.onRotateRight}
+        disabled={!props.hasSelection}
+      />
       <div className="w-px bg-gray-200 mx-1" />
-      <ToolButton icon={<ZoomIn size={18} />} label="Agrandar" onClick={props.onScaleUp} disabled={!props.hasSelection} />
-      <ToolButton icon={<ZoomOut size={18} />} label="Achicar" onClick={props.onScaleDown} disabled={!props.hasSelection} />
+      <ToolButton
+        icon={<ZoomIn size={18} />}
+        label="Agrandar"
+        onClick={props.onScaleUp}
+        disabled={!props.hasSelection}
+      />
+      <ToolButton
+        icon={<ZoomOut size={18} />}
+        label="Achicar"
+        onClick={props.onScaleDown}
+        disabled={!props.hasSelection}
+      />
       <div className="w-px bg-gray-200 mx-1" />
-      <ToolButton icon={<Trash2 size={18} />} label="Eliminar" onClick={props.onDelete} disabled={!props.hasSelection} danger />
+      <ToolButton
+        icon={<Trash2 size={18} />}
+        label="Eliminar"
+        onClick={props.onDelete}
+        disabled={!props.hasSelection}
+        danger
+      />
       <div className="w-px bg-gray-200 mx-1" />
       <ToolButton icon={<Grid size={18} />} label="Grid" onClick={props.onToggleGrid} />
       <ToolButton icon={<Save size={18} />} label="Guardar" onClick={props.onSave} />
@@ -201,8 +229,18 @@ export function EditorToolbar(props: Props) {
   );
 }
 
-function ToolButton({ icon, label, onClick, disabled, danger }: {
-  icon: React.ReactNode; label: string; onClick: () => void; disabled?: boolean; danger?: boolean;
+function ToolButton({
+  icon,
+  label,
+  onClick,
+  disabled,
+  danger,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  danger?: boolean;
 }) {
   return (
     <button
@@ -210,9 +248,11 @@ function ToolButton({ icon, label, onClick, disabled, danger }: {
       disabled={disabled}
       title={label}
       className={`p-2.5 rounded-xl transition-all ${
-        disabled ? 'opacity-30 cursor-not-allowed' :
-        danger ? 'hover:bg-red-50 text-red-500' :
-        'hover:bg-surface-tertiary text-presisso-charcoal'
+        disabled
+          ? 'opacity-30 cursor-not-allowed'
+          : danger
+            ? 'hover:bg-red-50 text-red-500'
+            : 'hover:bg-surface-tertiary text-presisso-charcoal'
       }`}
     >
       {icon}
@@ -231,12 +271,24 @@ document.addEventListener('keydown', (e) => {
   if (!interactionManager) return;
   switch (e.key) {
     case 'Delete':
-    case 'Backspace': interactionManager.deleteSelected(); break;
-    case 'r': interactionManager.rotateSelected(45); break;
-    case 'e': interactionManager.rotateSelected(-45); break;
-    case '+': interactionManager.scaleSelected(1.1); break;
-    case '-': interactionManager.scaleSelected(0.9); break;
-    case 'Escape': interactionManager.deselectAll(); break;
+    case 'Backspace':
+      interactionManager.deleteSelected();
+      break;
+    case 'r':
+      interactionManager.rotateSelected(45);
+      break;
+    case 'e':
+      interactionManager.rotateSelected(-45);
+      break;
+    case '+':
+      interactionManager.scaleSelected(1.1);
+      break;
+    case '-':
+      interactionManager.scaleSelected(0.9);
+      break;
+    case 'Escape':
+      interactionManager.deselectAll();
+      break;
   }
 });
 ```
