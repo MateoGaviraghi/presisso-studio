@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Propuesta — {{projectName}}</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Inter', Arial, sans-serif;
+        color: #2c2c2a;
+        background: #ffffff;
+      }
+      .header {
+        background: #1a1a2e;
+        color: #ffffff;
+        padding: 40px;
+      }
+      .header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        color: #c4a35a;
+      }
+      .header p {
+        margin-top: 8px;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+      .content {
+        padding: 40px;
+      }
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+      .screenshot {
+        width: 100%;
+        border-radius: 12px;
+        margin-bottom: 30px;
+      }
+      .footer {
+        text-align: center;
+        padding: 20px;
+        font-size: 12px;
+        color: #999;
+        border-top: 1px solid #f1efe8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Presisso Muebles</h1>
+      <p>Propuesta Comercial — {{projectName}}</p>
+    </div>
+    <div class="content">
+      <div class="meta">
+        <span>Cliente: {{clientName}}</span>
+        <span>Fecha: {{date}}</span>
+      </div>
+      <img class="screenshot" src="data:image/png;base64,{{screenshot}}" alt="Vista del proyecto" />
+    </div>
+    <div class="footer">Presisso Muebles — Buenos Aires, Argentina</div>
+  </body>
+</html>

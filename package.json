@@ -1,0 +1,19 @@
+{
+  "name": "presisso-studio",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "pnpm --filter @presisso/web dev",
+    "dev:api": "pnpm --filter @presisso/api dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "db:up": "docker-compose -f infra/docker/docker-compose.yml up -d",
+    "db:down": "docker-compose -f infra/docker/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @presisso/api db:migrate",
+    "db:seed": "pnpm --filter @presisso/api db:seed",
+    "setup": "pnpm install && pnpm db:up && sleep 3 && pnpm db:migrate && pnpm db:seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  }
+}
