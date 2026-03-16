@@ -6,15 +6,20 @@ export default {
     extend: {
       colors: {
         presisso: {
-          dark: '#1A1A2E',
-          gold: '#C4A35A',
-          cream: '#FAF8F4',
-          charcoal: '#2C2C2A',
+          red: '#D42B2B',
+          'red-hover': '#B82424',
+          'red-light': '#FDF2F2',
+          black: '#1A1A1A',
+          charcoal: '#333333',
+          gray: '#6B6B6B',
         },
         surface: {
           primary: '#FFFFFF',
-          secondary: '#F8F7F4',
-          tertiary: '#F1EFE8',
+          secondary: '#FAFAF9',
+          tertiary: '#F5F5F3',
+        },
+        border: {
+          DEFAULT: '#E5E5E5',
         },
       },
       fontFamily: {

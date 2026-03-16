@@ -13,11 +13,14 @@ export const ROOM_TYPES = ['living', 'dormitorio', 'comedor', 'oficina', 'cocina
 export const USER_ROLES = ['client', 'vendor', 'admin'] as const;
 
 export const BRAND_COLORS = {
-  dark: '#1A1A2E',
-  gold: '#C4A35A',
-  cream: '#FAF8F4',
-  charcoal: '#2C2C2A',
+  red: '#D42B2B',
+  redHover: '#B82424',
+  redLight: '#FDF2F2',
+  black: '#1A1A1A',
+  charcoal: '#333333',
+  gray: '#6B6B6B',
   surfacePrimary: '#FFFFFF',
-  surfaceSecondary: '#F8F7F4',
-  surfaceTertiary: '#F1EFE8',
+  surfaceSecondary: '#FAFAF9',
+  surfaceTertiary: '#F5F5F3',
+  border: '#E5E5E5',
 } as const;

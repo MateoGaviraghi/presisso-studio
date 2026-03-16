@@ -48,15 +48,22 @@ function buildSystemPrompt(context: {
   userName: string;
   userRole: string;
 }): string {
-  const productList = context.catalogProducts.map(p =>
-    `- ${p.name} (SKU: ${p.sku}) | ${p.category} | ${p.widthCm}×${p.heightCm}×${p.depthCm}cm | Materiales: ${p.materials?.map((m: any) => m.name).join(', ') || 'N/A'}`
-  ).join('\n');
+  const productList = context.catalogProducts
+    .map(
+      (p) =>
+        `- ${p.name} (SKU: ${p.sku}) | ${p.category} | ${p.widthCm}×${p.heightCm}×${p.depthCm}cm | Materiales: ${p.materials?.map((m: any) => m.name).join(', ') || 'N/A'}`,
+    )
+    .join('\n');
 
-  const currentItems = context.projectItems.length > 0
-    ? context.projectItems.map(item =>
-        `- ${item.product.name} (posición: ${item.positionX},${item.positionY},${item.positionZ})`
-      ).join('\n')
-    : 'Ninguno todavía.';
+  const currentItems =
+    context.projectItems.length > 0
+      ? context.projectItems
+          .map(
+            (item) =>
+              `- ${item.product.name} (posición: ${item.positionX},${item.positionY},${item.positionZ})`,
+          )
+          .join('\n')
+      : 'Ninguno todavía.';
 
   const roomInfo = context.roomDimensions
     ? `${context.roomDimensions.width}cm ancho × ${context.roomDimensions.height}cm alto × ${context.roomDimensions.depth}cm profundidad`
@@ -122,11 +129,13 @@ export async function chatWithClaude(params: {
   const systemPrompt = buildSystemPrompt({
     catalogProducts,
     projectItems: project?.items || [],
-    roomDimensions: project ? {
-      width: project.roomWidthCm || '0',
-      height: project.roomHeightCm || '0',
-      depth: project.roomDepthCm || '0',
-    } : null,
+    roomDimensions: project
+      ? {
+          width: project.roomWidthCm || '0',
+          height: project.roomHeightCm || '0',
+          depth: project.roomDepthCm || '0',
+        }
+      : null,
     roomType: project?.roomType || 'kitchen',
     userName: project?.user?.name || 'Cliente',
     userRole: params.userRole,
@@ -134,7 +143,7 @@ export async function chatWithClaude(params: {
 
   // 5. Construir mensajes (historial + nuevo mensaje)
   const messages = [
-    ...history.reverse().map(msg => ({
+    ...history.reverse().map((msg) => ({
       role: msg.role as 'user' | 'assistant',
       content: msg.content,
     })),
@@ -185,7 +194,7 @@ export async function chatRoutes(app: FastifyInstance) {
     reply.raw.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      Connection: 'keep-alive',
     });
 
     try {
@@ -219,7 +228,9 @@ export async function chatRoutes(app: FastifyInstance) {
       reply.raw.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
       reply.raw.end();
     } catch (error) {
-      reply.raw.write(`data: ${JSON.stringify({ type: 'error', message: 'Error al procesar tu mensaje' })}\n\n`);
+      reply.raw.write(
+        `data: ${JSON.stringify({ type: 'error', message: 'Error al procesar tu mensaje' })}\n\n`,
+      );
       reply.raw.end();
     }
   });
@@ -270,13 +281,13 @@ export function ChatPanel() {
     if (!input.trim() || isStreaming || !projectId) return;
 
     const userMessage: Message = { id: crypto.randomUUID(), role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsStreaming(true);
 
     // Crear placeholder para la respuesta
     const assistantId = crypto.randomUUID();
-    setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '' }]);
+    setMessages((prev) => [...prev, { id: assistantId, role: 'assistant', content: '' }]);
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/chat`, {
@@ -302,11 +313,10 @@ export function ChatPanel() {
           if (line.startsWith('data: ')) {
             const data = JSON.parse(line.slice(6));
             if (data.type === 'text') {
-              setMessages(prev =>
-                prev.map(m => m.id === assistantId
-                  ? { ...m, content: m.content + data.text }
-                  : m
-                )
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId ? { ...m, content: m.content + data.text } : m,
+                ),
               );
             }
           }
@@ -323,8 +333,8 @@ export function ChatPanel() {
     <div className="flex flex-col h-full bg-white rounded-2xl border border-black/5">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-gray-100">
-        <div className="w-8 h-8 rounded-full bg-presisso-gold/10 flex items-center justify-center">
-          <Sparkles size={16} className="text-presisso-gold" />
+        <div className="w-8 h-8 rounded-full bg-presisso-red-light flex items-center justify-center">
+          <Sparkles size={16} className="text-presisso-red" />
         </div>
         <div>
           <p className="text-sm font-medium">Studio</p>
@@ -338,21 +348,32 @@ export function ChatPanel() {
           <div className="text-center py-8 text-gray-400">
             <Sparkles className="mx-auto mb-3" size={32} />
             <p className="text-sm">¡Hola! Soy Studio, tu asistente de diseño.</p>
-            <p className="text-xs mt-1">Preguntame sobre productos, materiales o cómo usar el editor.</p>
+            <p className="text-xs mt-1">
+              Preguntame sobre productos, materiales o cómo usar el editor.
+            </p>
           </div>
         )}
         {messages.map((msg) => (
-          <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
-              msg.role === 'user' ? 'bg-presisso-dark text-white' : 'bg-presisso-gold/10 text-presisso-gold'
-            }`}>
+          <div
+            key={msg.id}
+            className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+          >
+            <div
+              className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
+                msg.role === 'user'
+                  ? 'bg-presisso-black text-white'
+                  : 'bg-presisso-red-light text-presisso-red'
+              }`}
+            >
               {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
             </div>
-            <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-              msg.role === 'user'
-                ? 'bg-presisso-dark text-white rounded-tr-md'
-                : 'bg-surface-tertiary text-gray-700 rounded-tl-md'
-            }`}>
+            <div
+              className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                msg.role === 'user'
+                  ? 'bg-presisso-black text-white rounded-tr-md'
+                  : 'bg-surface-tertiary text-gray-700 rounded-tl-md'
+              }`}
+            >
               {msg.content || <span className="animate-pulse">...</span>}
             </div>
           </div>
@@ -369,12 +390,12 @@ export function ChatPanel() {
             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             placeholder="Preguntale a Studio..."
             disabled={isStreaming}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-presisso-gold outline-none disabled:opacity-50"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-presisso-red outline-none disabled:opacity-50"
           />
           <button
             onClick={sendMessage}
             disabled={isStreaming || !input.trim()}
-            className="p-2.5 bg-presisso-gold text-white rounded-xl disabled:opacity-50 hover:bg-presisso-gold/90"
+            className="p-2.5 bg-presisso-red text-white rounded-xl disabled:opacity-50 hover:bg-presisso-red-hover"
           >
             <Send size={18} />
           </button>

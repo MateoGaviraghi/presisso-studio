@@ -1,11 +1,13 @@
 # Presisso Studio — Instrucciones para Copilot
 
 ## Qué es este proyecto
+
 Presisso Studio es un configurador web 3D + AR para Presisso Muebles (Argentina). Permite a clientes visualizar muebles premium en 3D sobre fotos de su espacio real y en realidad aumentada con la cámara del celular. Incluye un asistente IA (Claude API) y generación de propuestas PDF branded.
 
 Hay una EXPO en 4 semanas. Todo lo que construimos debe ser funcional para esa fecha.
 
 ## Stack
+
 - **Monorepo**: pnpm workspaces + Turborepo
 - **Frontend**: React 18 + Vite 5 + Tailwind CSS 3.4 + Babylon.js 7 + Zustand
 - **Backend**: Node.js 20 + Fastify 4 + Drizzle ORM + PostgreSQL 16
@@ -17,6 +19,7 @@ Hay una EXPO en 4 semanas. Todo lo que construimos debe ser funcional para esa f
 - **Deploy**: Vercel (frontend) + Railway (backend + DB)
 
 ## Estructura del monorepo
+
 ```
 apps/web/          → React + Babylon.js + Tailwind (port 3000)
 apps/api/          → Fastify REST API (port 4000)
@@ -27,6 +30,7 @@ docs/              → 16 archivos .md con documentación técnica paso a paso
 ```
 
 ## Comandos principales
+
 ```bash
 pnpm dev           # Levanta frontend + backend en paralelo
 pnpm dev:web       # Solo frontend (localhost:3000)
@@ -39,6 +43,7 @@ pnpm lint          # ESLint en todo el proyecto
 ```
 
 ## Convenciones de código
+
 - TypeScript estricto. No `any` salvo excepciones documentadas.
 - Componentes React: functional + hooks. No class components.
 - Archivos: kebab-case. Componentes: PascalCase. Variables: camelCase.
@@ -51,7 +56,9 @@ pnpm lint          # ESLint en todo el proyecto
 - Estilos: Tailwind CSS utilities + @layer components para custom.
 
 ## Base de datos (PostgreSQL 16 + Drizzle ORM)
+
 5 tablas:
+
 - `users` — roles: client/vendor/admin. Auth con JWT + Google OAuth.
 - `products` — catálogo de muebles. Materiales en JSONB. modelUrl apunta a GLB en CDN.
 - `projects` — configuraciones del cliente. editorState serializado en JSONB.
@@ -59,6 +66,7 @@ pnpm lint          # ESLint en todo el proyecto
 - `chat_messages` — historial del asistente IA por proyecto.
 
 ## API Endpoints
+
 - Auth: POST /api/auth/register, /login. GET /auth/google, /google/callback, /me
 - Products: GET /api/products (filtros: category, roomType, search), GET/POST/PUT/DELETE /:id
 - Projects: CRUD completo + POST /:id/items, PUT/DELETE /:id/items/:itemId, PUT /:id/editor-state
@@ -67,16 +75,22 @@ pnpm lint          # ESLint en todo el proyecto
 - PDF: POST /api/pdf/generate/:projectId
 
 ## Paleta de marca Presisso
-- Dark: #1A1A2E (navy oscuro premium)
-- Gold: #C4A35A (acento dorado)
-- Cream: #FAF8F4 (fondo cálido)
-- Charcoal: #2C2C2A (texto principal)
-- Surfaces: #FFFFFF, #F8F7F4, #F1EFE8
+
+- Red: #D42B2B (acento rojo — color principal de marca)
+- Red hover: #B82424 (hover/active del rojo)
+- Red light: #FDF2F2 (fondo rojo sutil)
+- Black: #1A1A1A (negro principal — header, sidebar, footer)
+- Charcoal: #333333 (texto principal)
+- Gray: #6B6B6B (texto secundario)
+- Surfaces: #FFFFFF (primary), #FAFAF9 (secondary), #F5F5F3 (tertiary)
+- Border: #E5E5E5
 - Fuentes: Inter (body), Playfair Display (display/títulos)
-- Estilo: elegancia premium. NO usar diseño genérico o "AI slop".
+- Estilo: elegancia premium, negro + rojo. NO usar diseño genérico o "AI slop".
 
 ## Documentación técnica
+
 ANTES de implementar cualquier módulo, LEER el archivo correspondiente en `docs/`:
+
 - `01-SETUP-ENTORNO.md` — Monorepo, configs, estructura, dependencias
 - `02-BASE-DE-DATOS.md` — Schema Drizzle completo, migraciones, seeds
 - `03-AUTENTICACION.md` — JWT, Google OAuth, middleware de roles
@@ -94,6 +108,7 @@ ANTES de implementar cualquier módulo, LEER el archivo correspondiente en `docs
 - `15-QA-EXPO-PREPARACION.md` — Testing, checklist expo, plan contingencia
 
 ## Reglas críticas
+
 1. Claude API key: SOLO en el backend. NUNCA en el frontend. Siempre proxy.
 2. Performance 3D: Max 5 modelos simultáneos. Draco compression en GLBs.
 3. Deadline: 4 semanas para expo. Funcionalidad > perfección.

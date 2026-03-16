@@ -13,15 +13,19 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-presisso-dark text-white px-6 py-3 rounded-xl font-medium
-           hover:bg-presisso-dark/90 transition-all duration-200
+    @apply bg-presisso-red text-white px-6 py-3 rounded-xl font-medium
+           hover:bg-presisso-red-hover transition-all duration-200
            active:scale-[0.98];
   }
-  .btn-gold {
-    @apply bg-presisso-gold text-white px-6 py-3 rounded-xl font-medium
-           hover:bg-presisso-gold/90 transition-all duration-200;
+  .btn-secondary {
+    @apply bg-presisso-black text-white px-6 py-3 rounded-xl font-medium
+           hover:bg-presisso-black/90 transition-all duration-200;
+  }
+  .btn-outline {
+    @apply border border-border text-presisso-charcoal px-6 py-3 rounded-xl font-medium
+           hover:bg-surface-tertiary transition-all duration-200;
   }
   .card {
-    @apply bg-white rounded-2xl border border-black/5 shadow-sm;
+    @apply bg-white rounded-2xl border border-border shadow-sm;
   }
 }

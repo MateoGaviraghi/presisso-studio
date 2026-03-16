@@ -96,7 +96,11 @@ export function PhotoUpload() {
 
       {backgroundImageUrl || preview ? (
         <div className="relative rounded-xl overflow-hidden border border-gray-200">
-          <img src={preview || backgroundImageUrl!} alt="Espacio" className="w-full h-32 object-cover" />
+          <img
+            src={preview || backgroundImageUrl!}
+            alt="Espacio"
+            className="w-full h-32 object-cover"
+          />
           <button
             onClick={removeBackground}
             className="absolute top-2 right-2 p-1.5 bg-black/50 rounded-lg text-white hover:bg-black/70"
@@ -108,10 +112,10 @@ export function PhotoUpload() {
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="w-full border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-presisso-gold hover:bg-presisso-gold/5 transition-all"
+          className="w-full border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-presisso-red hover:bg-presisso-red-light transition-all"
         >
           {uploading ? (
-            <div className="animate-spin w-6 h-6 border-2 border-presisso-gold border-t-transparent rounded-full mx-auto" />
+            <div className="animate-spin w-6 h-6 border-2 border-presisso-red border-t-transparent rounded-full mx-auto" />
           ) : (
             <>
               <Upload className="mx-auto mb-2 text-gray-400" size={24} />
@@ -173,21 +177,38 @@ export function RoomDimensions() {
       <div className="grid grid-cols-3 gap-2">
         <div>
           <label className="text-xs text-gray-400">Ancho</label>
-          <input type="number" value={width} onChange={(e) => setWidth(e.target.value)}
-            placeholder="300" className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" />
+          <input
+            type="number"
+            value={width}
+            onChange={(e) => setWidth(e.target.value)}
+            placeholder="300"
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm"
+          />
         </div>
         <div>
           <label className="text-xs text-gray-400">Alto</label>
-          <input type="number" value={height} onChange={(e) => setHeight(e.target.value)}
-            placeholder="260" className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" />
+          <input
+            type="number"
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
+            placeholder="260"
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm"
+          />
         </div>
         <div>
           <label className="text-xs text-gray-400">Profundidad</label>
-          <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)}
-            placeholder="400" className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" />
+          <input
+            type="number"
+            value={depth}
+            onChange={(e) => setDepth(e.target.value)}
+            placeholder="400"
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm"
+          />
         </div>
       </div>
-      <button onClick={handleApply} className="w-full btn-primary text-sm">Aplicar medidas</button>
+      <button onClick={handleApply} className="w-full btn-primary text-sm">
+        Aplicar medidas
+      </button>
     </div>
   );
 }

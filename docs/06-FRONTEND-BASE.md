@@ -40,7 +40,8 @@ import { AuthCallbackPage } from './pages/AuthCallbackPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
-  if (isLoading) return <div className="flex items-center justify-center h-screen">Cargando...</div>;
+  if (isLoading)
+    return <div className="flex items-center justify-center h-screen">Cargando...</div>;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
@@ -51,7 +52,14 @@ export function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
-        <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<DashboardPage />} />
           <Route path="editor/:projectId" element={<EditorPage />} />
           <Route path="catalog" element={<CatalogPage />} />
@@ -99,7 +107,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = api.getToken();
     if (token) {
-      api.get<{ user: User }>('/auth/me')
+      api
+        .get<{ user: User }>('/auth/me')
         .then(({ user }) => setUser(user))
         .catch(() => api.clearToken())
         .finally(() => setIsLoading(false));
@@ -109,7 +118,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const { token, user } = await api.post<{ token: string; user: User }>('/auth/login', { email, password });
+    const { token, user } = await api.post<{ token: string; user: User }>('/auth/login', {
+      email,
+      password,
+    });
     api.setToken(token);
     setUser(user);
   };
@@ -159,10 +171,10 @@ export function MainLayout() {
   return (
     <div className="flex h-screen bg-surface-secondary">
       {/* Sidebar */}
-      <aside className="w-64 bg-presisso-dark text-white flex flex-col">
+      <aside className="w-64 bg-presisso-black text-white flex flex-col">
         <div className="p-6 border-b border-white/10">
           <h1 className="font-display text-xl font-semibold tracking-wide">
-            PRESISSO <span className="text-presisso-gold">STUDIO</span>
+            PRESISSO <span className="text-presisso-red">STUDIO</span>
           </h1>
         </div>
 
@@ -176,7 +188,7 @@ export function MainLayout() {
 
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-full bg-presisso-gold/20 flex items-center justify-center text-sm font-medium text-presisso-gold">
+            <div className="w-9 h-9 rounded-full bg-presisso-red/20 flex items-center justify-center text-sm font-medium text-presisso-red">
               {user?.name?.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
@@ -184,7 +196,10 @@ export function MainLayout() {
               <p className="text-xs text-white/50 truncate">{user?.email}</p>
             </div>
           </div>
-          <button onClick={logout} className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+          >
             <LogOut size={16} /> Cerrar sesión
           </button>
         </div>
@@ -205,7 +220,9 @@ function SidebarLink({ to, icon, label }: { to: string; icon: React.ReactNode; l
       end
       className={({ isActive }) =>
         `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-          isActive ? 'bg-white/10 text-presisso-gold' : 'text-white/70 hover:bg-white/5 hover:text-white'
+          isActive
+            ? 'bg-white/10 text-presisso-red'
+            : 'text-white/70 hover:bg-white/5 hover:text-white'
         }`
       }
     >
@@ -247,7 +264,10 @@ interface EditorStore {
   setItems: (items: EditorItem[]) => void;
   addItem: (item: EditorItem) => void;
   removeItem: (id: string) => void;
-  updateItemTransform: (id: string, transform: Partial<Pick<EditorItem, 'position' | 'rotationY' | 'scale'>>) => void;
+  updateItemTransform: (
+    id: string,
+    transform: Partial<Pick<EditorItem, 'position' | 'rotationY' | 'scale'>>,
+  ) => void;
   selectItem: (id: string | null) => void;
   setBackgroundImage: (url: string | null) => void;
   setRoomDimensions: (dims: { width: number; height: number; depth: number }) => void;
@@ -263,10 +283,15 @@ export const useEditorStore = create<EditorStore>((set) => ({
   setProjectId: (id) => set({ projectId: id }),
   setItems: (items) => set({ items }),
   addItem: (item) => set((s) => ({ items: [...s.items, item] })),
-  removeItem: (id) => set((s) => ({ items: s.items.filter((i) => i.id !== id), selectedItemId: s.selectedItemId === id ? null : s.selectedItemId })),
-  updateItemTransform: (id, transform) => set((s) => ({
-    items: s.items.map((i) => i.id === id ? { ...i, ...transform } : i),
-  })),
+  removeItem: (id) =>
+    set((s) => ({
+      items: s.items.filter((i) => i.id !== id),
+      selectedItemId: s.selectedItemId === id ? null : s.selectedItemId,
+    })),
+  updateItemTransform: (id, transform) =>
+    set((s) => ({
+      items: s.items.map((i) => (i.id === id ? { ...i, ...transform } : i)),
+    })),
   selectItem: (id) => set({ selectedItemId: id }),
   setBackgroundImage: (url) => set({ backgroundImageUrl: url }),
   setRoomDimensions: (dims) => set({ roomDimensions: dims }),

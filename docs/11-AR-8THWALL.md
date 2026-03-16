@@ -11,6 +11,7 @@
 8thWall es una plataforma de AR web que funciona directamente en el navegador sin instalar ninguna app. Compatible con iPhone (Safari) y Android (Chrome). Presisso lo usa para el Modo 2 de visualización.
 
 **Por qué 8thWall y no WebXR nativo:**
+
 - WebXR tiene soporte limitado en iOS Safari
 - 8thWall funciona en el 95%+ de dispositivos móviles modernos
 - Integración nativa con Babylon.js
@@ -142,15 +143,11 @@ export async function createArScene(canvas: HTMLCanvasElement, modelUrl: string)
         const raycaster = XR8.XrController.hitTest(
           touchPoint.clientX / canvas.width,
           touchPoint.clientY / canvas.height,
-          ['FEATURE_POINT']
+          ['FEATURE_POINT'],
         );
         if (raycaster && raycaster.length > 0) {
           const hit = raycaster[0];
-          placedModel.position = new Vector3(
-            hit.position.x,
-            hit.position.y,
-            hit.position.z
-          );
+          placedModel.position = new Vector3(hit.position.x, hit.position.y, hit.position.z);
           placedModel.setEnabled(true);
         }
       }
@@ -160,17 +157,17 @@ export async function createArScene(canvas: HTMLCanvasElement, modelUrl: string)
   // Iniciar 8thWall AR
   XR8.XrController.configure({
     disableWorldTracking: false,
-    scale: 'absolute',        // Escala real (1 unidad = 1 metro)
-    enableLighting: true,     // Estimación de iluminación
+    scale: 'absolute', // Escala real (1 unidad = 1 metro)
+    enableLighting: true, // Estimación de iluminación
   });
 
   XR8.addCameraPipelineModules([
     XR8.GlTextureRenderer.pipelineModule(),
     XR8.Babylonjs.pipelineModule(),
     XR8.XrController.pipelineModule(),
-    XRExtras.AlmostThere.pipelineModule(),      // UI de "casi listo"
-    XRExtras.Loading.pipelineModule(),           // Pantalla de carga
-    XRExtras.RuntimeError.pipelineModule(),      // Manejo de errores
+    XRExtras.AlmostThere.pipelineModule(), // UI de "casi listo"
+    XRExtras.Loading.pipelineModule(), // Pantalla de carga
+    XRExtras.RuntimeError.pipelineModule(), // Manejo de errores
     pipelineModule,
     touchPlaceModule,
   ]);
@@ -244,7 +241,10 @@ export function ArPage() {
       }
     }
     init();
-    return () => { mounted = false; arRef.current?.dispose(); };
+    return () => {
+      mounted = false;
+      arRef.current?.dispose();
+    };
   }, [modelUrl]);
 
   const handleCapture = async () => {
@@ -264,7 +264,7 @@ export function ArPage() {
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white">
           <div className="text-center">
-            <div className="animate-spin w-10 h-10 border-3 border-presisso-gold border-t-transparent rounded-full mx-auto mb-4" />
+            <div className="animate-spin w-10 h-10 border-3 border-presisso-red border-t-transparent rounded-full mx-auto mb-4" />
             <p>Cargando experiencia AR...</p>
             <p className="text-sm text-white/60 mt-1">Permití el acceso a la cámara</p>
           </div>
@@ -276,16 +276,28 @@ export function ArPage() {
         <button onClick={() => navigate(-1)} className="p-3 bg-white/90 rounded-full shadow-lg">
           <ArrowLeft size={20} />
         </button>
-        <button onClick={() => arRef.current?.rotateModel(45)} className="p-3 bg-white/90 rounded-full shadow-lg">
+        <button
+          onClick={() => arRef.current?.rotateModel(45)}
+          className="p-3 bg-white/90 rounded-full shadow-lg"
+        >
           <RotateCw size={20} />
         </button>
-        <button onClick={() => arRef.current?.scaleModel(1.2)} className="p-3 bg-white/90 rounded-full shadow-lg">
+        <button
+          onClick={() => arRef.current?.scaleModel(1.2)}
+          className="p-3 bg-white/90 rounded-full shadow-lg"
+        >
           <ZoomIn size={20} />
         </button>
-        <button onClick={() => arRef.current?.scaleModel(0.8)} className="p-3 bg-white/90 rounded-full shadow-lg">
+        <button
+          onClick={() => arRef.current?.scaleModel(0.8)}
+          className="p-3 bg-white/90 rounded-full shadow-lg"
+        >
           <ZoomOut size={20} />
         </button>
-        <button onClick={handleCapture} className="p-4 bg-presisso-gold rounded-full shadow-lg text-white">
+        <button
+          onClick={handleCapture}
+          className="p-4 bg-presisso-red rounded-full shadow-lg text-white"
+        >
           <Camera size={24} />
         </button>
       </div>

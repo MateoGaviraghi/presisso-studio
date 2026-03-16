@@ -32,6 +32,7 @@ presisso-studio/
 ### 1.3 Habilitar instrucciones del repo
 
 En VS Code:
+
 - `Ctrl+Shift+P` → "Copilot: Configure Code Generation"
 - O en settings: `"github.copilot.chat.codeGeneration.useInstructionFiles": true`
 
@@ -81,7 +82,7 @@ Seguí las instrucciones del documento paso a paso. Creá:
 9. Root package.json con scripts: dev, build, db:up, db:migrate, db:seed
 
 Usá la paleta de colores de Presisso:
-- presisso-dark: #1A1A2E, presisso-gold: #C4A35A, presisso-cream: #FAF8F4
+- presisso-red: #D42B2B, presisso-black: #1A1A1A, presisso-charcoal: #333333, presisso-gray: #6B6B6B
 
 Avisame cuando esté listo para continuar con la base de datos.
 ```
@@ -151,13 +152,13 @@ Implementá:
 1. App.tsx con react-router-dom: rutas protegidas (ProtectedRoute con redirect a /login)
 2. AuthContext: login, register, loginWithGoogle, logout, auto-load token de localStorage
 3. API client (apps/web/src/services/api-client.ts) con Bearer token automático
-4. MainLayout: sidebar dark navy (#1A1A2E) con logo "PRESISSO STUDIO", navegación, user info, logout
+4. MainLayout: sidebar negro (#1A1A1A) con logo PNG de Presisso, navegación con links rojos activos, user info, logout
 5. LoginPage: formulario email/password + botón "Continuar con Google" + branding Presisso
 6. DashboardPage: grid de proyectos del usuario con cards (nombre, roomType, fecha, status)
 7. Zustand editor-store.ts: projectId, items, selectedItemId, backgroundImageUrl, roomDimensions
 8. AuthCallbackPage: parsea ?token= del redirect de Google OAuth
 
-DISEÑO: Elegancia premium. Sidebar navy oscuro con dorado. Cards con bordes sutiles y sombras mínimas.
+DISEÑO: Elegancia premium. Sidebar negro con acentos rojos. Cards con bordes sutiles y sombras mínimas.
 Usá Inter para body, Playfair Display para títulos grandes. NO diseño genérico de AI.
 ```
 
@@ -206,8 +207,8 @@ Implementá:
 3. ArPage: integración 8thWall SDK + Babylon.js (cargar dinámicamente). Surface detection, model placement con toque, rotar/escalar, captura de foto
 4. Claude service (backend): buildSystemPrompt dinámico con catálogo completo + items del proyecto + medidas. Personalidad "Studio" en español argentino
 5. Chat route: POST /api/chat con SSE streaming. Guardar mensajes en chat_messages
-6. ChatPanel: UI de chat con streaming token por token, avatar bot dorado, bienvenida contextual
-7. PDF service: Puppeteer renderiza HTML branded → PDF. Portada Presisso (#1A1A2E + gold), screenshot del editor, tabla de productos
+6. ChatPanel: UI de chat con streaming token por token, avatar bot rojo, bienvenida contextual
+7. PDF service: Puppeteer renderiza HTML branded → PDF. Portada Presisso (#1A1A1A + rojo), screenshot del editor, tabla de productos
 8. PdfDownloadButton: toma screenshot del canvas, envía a /api/pdf/generate, descarga el PDF
 
 CRÍTICO: API key de Claude SOLO en backend (.env). Chat usa SSE (text/event-stream).

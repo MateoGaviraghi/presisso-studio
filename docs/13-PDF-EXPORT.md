@@ -27,7 +27,10 @@ import { projects, projectItems, products } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 import { uploadFile } from './s3.service.js';
 
-export async function generateProjectPdf(projectId: string, screenshotBase64?: string): Promise<string> {
+export async function generateProjectPdf(
+  projectId: string,
+  screenshotBase64?: string,
+): Promise<string> {
   // 1. Obtener datos del proyecto
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
@@ -50,7 +53,7 @@ export async function generateProjectPdf(projectId: string, screenshotBase64?: s
       height: project.roomHeightCm || '—',
       depth: project.roomDepthCm || '—',
     },
-    items: project.items.map(item => ({
+    items: project.items.map((item) => ({
       name: item.product.name,
       sku: item.product.sku,
       dimensions: `${item.product.widthCm} × ${item.product.heightCm} × ${item.product.depthCm} cm`,
@@ -61,7 +64,9 @@ export async function generateProjectPdf(projectId: string, screenshotBase64?: s
     })),
     screenshotBase64: screenshotBase64 || null,
     generatedAt: new Date().toLocaleDateString('es-AR', {
-      year: 'numeric', month: 'long', day: 'numeric',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     }),
   });
 
@@ -100,8 +105,13 @@ function buildPdfHtml(data: {
   generatedAt: string;
 }): string {
   const roomLabels: Record<string, string> = {
-    kitchen: 'Cocina', living: 'Living', bedroom: 'Dormitorio',
-    dining: 'Comedor', bathroom: 'Baño', office: 'Oficina', other: 'Otro',
+    kitchen: 'Cocina',
+    living: 'Living',
+    bedroom: 'Dormitorio',
+    dining: 'Comedor',
+    bathroom: 'Baño',
+    office: 'Oficina',
+    other: 'Otro',
   };
 
   return `<!DOCTYPE html>
@@ -112,10 +122,10 @@ function buildPdfHtml(data: {
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; color: #1A1A2E; }
+    body { font-family: 'Inter', sans-serif; color: #333333; }
 
     .cover {
-      height: 297mm; width: 210mm; background: #1A1A2E;
+      height: 297mm; width: 210mm; background: #1A1A1A;
       display: flex; flex-direction: column; justify-content: center;
       align-items: center; color: white; text-align: center;
       page-break-after: always;
@@ -124,7 +134,7 @@ function buildPdfHtml(data: {
       font-family: 'Playfair Display', serif; font-size: 42px;
       font-weight: 700; letter-spacing: 4px;
     }
-    .cover .gold { color: #C4A35A; }
+    .cover .gold { color: #D42B2B; }
     .cover .subtitle {
       font-size: 16px; color: rgba(255,255,255,0.6);
       margin-top: 16px; letter-spacing: 2px;
@@ -132,8 +142,8 @@ function buildPdfHtml(data: {
     .cover .client-info {
       margin-top: 60px; font-size: 14px; color: rgba(255,255,255,0.5);
     }
-    .cover .client-info strong { color: #C4A35A; display: block; font-size: 20px; margin-bottom: 4px; }
-    .cover .divider { width: 60px; height: 2px; background: #C4A35A; margin: 40px auto; }
+    .cover .client-info strong { color: #D42B2B; display: block; font-size: 20px; margin-bottom: 4px; }
+    .cover .divider { width: 60px; height: 2px; background: #D42B2B; margin: 40px auto; }
 
     .page {
       padding: 20mm; min-height: 297mm; position: relative;
@@ -141,14 +151,14 @@ function buildPdfHtml(data: {
     }
     .header {
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px solid #C4A35A; padding-bottom: 12px; margin-bottom: 30px;
+      border-bottom: 2px solid #D42B2B; padding-bottom: 12px; margin-bottom: 30px;
     }
     .header .brand { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
-    .header .brand .gold { color: #C4A35A; }
+    .header .brand .gold { color: #D42B2B; }
     .header .date { font-size: 11px; color: #888; }
 
-    h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: #1A1A2E; }
-    h3 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; color: #C4A35A; text-transform: uppercase; letter-spacing: 1px; }
+    h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: #1A1A1A; }
+    h3 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; color: #D42B2B; text-transform: uppercase; letter-spacing: 1px; }
 
     .screenshot {
       width: 100%; border-radius: 12px; border: 1px solid #E5E5E5;
@@ -159,14 +169,14 @@ function buildPdfHtml(data: {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
     }
     .info-card {
-      background: #F8F7F4; border-radius: 8px; padding: 14px;
-      border-left: 3px solid #C4A35A;
+      background: #F5F5F3; border-radius: 8px; padding: 14px;
+      border-left: 3px solid #D42B2B;
     }
     .info-card label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
     .info-card p { font-size: 15px; font-weight: 500; margin-top: 4px; }
 
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    th { background: #1A1A2E; color: white; text-align: left; padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    th { background: #1A1A1A; color: white; text-align: left; padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
     td { padding: 10px 14px; border-bottom: 1px solid #E5E5E5; font-size: 13px; }
     tr:nth-child(even) td { background: #FAFAF8; }
 
@@ -236,7 +246,9 @@ function buildPdfHtml(data: {
         </tr>
       </thead>
       <tbody>
-        ${data.items.map(item => `
+        ${data.items
+          .map(
+            (item) => `
         <tr>
           <td><strong>${item.name}</strong></td>
           <td>${item.sku}</td>
@@ -244,7 +256,9 @@ function buildPdfHtml(data: {
           <td>${item.material}</td>
           <td>${item.line}</td>
         </tr>
-        `).join('')}
+        `,
+          )
+          .join('')}
       </tbody>
     </table>
 

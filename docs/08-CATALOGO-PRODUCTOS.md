@@ -50,7 +50,8 @@ export function ProductGrid({ onAddToEditor }: { onAddToEditor?: (product: Produ
     if (filters.category) params.set('category', filters.category);
     if (filters.search) params.set('search', filters.search);
 
-    api.get<{ products: Product[] }>(`/products?${params}`)
+    api
+      .get<{ products: Product[] }>(`/products?${params}`)
       .then(({ products }) => setProducts(products))
       .finally(() => setLoading(false));
   }, [filters]);
@@ -121,7 +122,14 @@ export function ProductCard({ product, onAdd }: Props) {
     const engine = new Engine(canvas, true, { preserveDrawingBuffer: false });
     const scene = new Scene(engine);
 
-    const camera = new ArcRotateCamera('previewCam', -Math.PI / 4, Math.PI / 3, 5, Vector3.Zero(), scene);
+    const camera = new ArcRotateCamera(
+      'previewCam',
+      -Math.PI / 4,
+      Math.PI / 3,
+      5,
+      Vector3.Zero(),
+      scene,
+    );
     camera.attachControl(canvas, true);
     new HemisphericLight('light', new Vector3(0, 1, 0), scene).intensity = 1;
 
@@ -164,7 +172,7 @@ export function ProductCard({ product, onAdd }: Props) {
           />
         )}
         {/* Badge de línea */}
-        <span className="absolute top-3 left-3 px-2 py-0.5 bg-presisso-dark/80 text-white text-xs rounded-lg">
+        <span className="absolute top-3 left-3 px-2 py-0.5 bg-presisso-black/80 text-white text-xs rounded-lg">
           {product.line}
         </span>
       </div>
@@ -246,7 +254,7 @@ export function CatalogFilters({ filters, onChange }: Props) {
           placeholder="Buscar productos..."
           value={filters.search}
           onChange={(e) => onChange({ ...filters, search: e.target.value })}
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-presisso-gold focus:ring-1 focus:ring-presisso-gold/30 outline-none"
+          className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-presisso-red focus:ring-1 focus:ring-presisso-red/30 outline-none"
         />
       </div>
       <select
@@ -254,14 +262,22 @@ export function CatalogFilters({ filters, onChange }: Props) {
         onChange={(e) => onChange({ ...filters, roomType: e.target.value })}
         className="px-4 py-2.5 rounded-xl border border-gray-200 text-sm"
       >
-        {ROOM_TYPES.map(rt => <option key={rt.value} value={rt.value}>{rt.label}</option>)}
+        {ROOM_TYPES.map((rt) => (
+          <option key={rt.value} value={rt.value}>
+            {rt.label}
+          </option>
+        ))}
       </select>
       <select
         value={filters.category}
         onChange={(e) => onChange({ ...filters, category: e.target.value })}
         className="px-4 py-2.5 rounded-xl border border-gray-200 text-sm"
       >
-        {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+        {CATEGORIES.map((c) => (
+          <option key={c.value} value={c.value}>
+            {c.label}
+          </option>
+        ))}
       </select>
     </div>
   );

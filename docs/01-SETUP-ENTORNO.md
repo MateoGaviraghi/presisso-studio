@@ -31,15 +31,15 @@ docker-compose --version
 
 ### Cuentas necesarias
 
-| Servicio | Para qué | URL de registro |
-|----------|----------|-----------------|
-| GitHub | Repositorio + CI/CD | github.com |
-| Railway | Deploy backend + DB | railway.app |
-| Vercel | Deploy frontend | vercel.com |
-| AWS | S3 + CloudFront | aws.amazon.com |
-| 8thWall | AR SDK | 8thwall.com |
-| Anthropic | Claude API | console.anthropic.com |
-| Google Cloud | OAuth2 login | console.cloud.google.com |
+| Servicio     | Para qué            | URL de registro          |
+| ------------ | ------------------- | ------------------------ |
+| GitHub       | Repositorio + CI/CD | github.com               |
+| Railway      | Deploy backend + DB | railway.app              |
+| Vercel       | Deploy frontend     | vercel.com               |
+| AWS          | S3 + CloudFront     | aws.amazon.com           |
+| 8thWall      | AR SDK              | 8thwall.com              |
+| Anthropic    | Claude API          | console.anthropic.com    |
+| Google Cloud | OAuth2 login        | console.cloud.google.com |
 
 ---
 
@@ -59,8 +59,8 @@ pnpm init
 ```yaml
 # pnpm-workspace.yaml
 packages:
-  - "apps/*"
-  - "packages/*"
+  - 'apps/*'
+  - 'packages/*'
 ```
 
 ### 2.3 Estructura de carpetas completa
@@ -313,15 +313,20 @@ export default {
     extend: {
       colors: {
         presisso: {
-          dark: '#1A1A2E',
-          gold: '#C4A35A',
-          cream: '#FAF8F4',
-          charcoal: '#2C2C2A',
+          red: '#D42B2B',
+          'red-hover': '#B82424',
+          'red-light': '#FDF2F2',
+          black: '#1A1A1A',
+          charcoal: '#333333',
+          gray: '#6B6B6B',
         },
         surface: {
           primary: '#FFFFFF',
-          secondary: '#F8F7F4',
-          tertiary: '#F1EFE8',
+          secondary: '#FAFAF9',
+          tertiary: '#F5F5F3',
+        },
+        border: {
+          DEFAULT: '#E5E5E5',
         },
       },
       fontFamily: {
@@ -355,16 +360,20 @@ export default {
 
 @layer components {
   .btn-primary {
-    @apply bg-presisso-dark text-white px-6 py-3 rounded-xl font-medium
-           hover:bg-presisso-dark/90 transition-all duration-200
+    @apply bg-presisso-red text-white px-6 py-3 rounded-xl font-medium
+           hover:bg-presisso-red-hover transition-all duration-200
            active:scale-[0.98];
   }
-  .btn-gold {
-    @apply bg-presisso-gold text-white px-6 py-3 rounded-xl font-medium
-           hover:bg-presisso-gold/90 transition-all duration-200;
+  .btn-secondary {
+    @apply bg-presisso-black text-white px-6 py-3 rounded-xl font-medium
+           hover:bg-presisso-black/90 transition-all duration-200;
+  }
+  .btn-outline {
+    @apply border border-border text-presisso-charcoal px-6 py-3 rounded-xl font-medium
+           hover:bg-surface-tertiary transition-all duration-200;
   }
   .card {
-    @apply bg-white rounded-2xl border border-black/5 shadow-sm;
+    @apply bg-white rounded-2xl border border-border shadow-sm;
   }
 }
 ```
@@ -490,9 +499,10 @@ import { errorHandler } from './middleware/error-handler.js';
 export async function buildApp() {
   const app = Fastify({
     logger: {
-      transport: env.NODE_ENV === 'development'
-        ? { target: 'pino-pretty', options: { colorize: true } }
-        : undefined,
+      transport:
+        env.NODE_ENV === 'development'
+          ? { target: 'pino-pretty', options: { colorize: true } }
+          : undefined,
     },
   });
 
@@ -627,11 +637,11 @@ services:
       POSTGRES_PASSWORD: presisso_dev
       POSTGRES_DB: presisso_studio
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U presisso"]
+      test: ['CMD-SHELL', 'pg_isready -U presisso']
       interval: 5s
       timeout: 5s
       retries: 5
