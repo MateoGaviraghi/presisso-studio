@@ -2,12 +2,12 @@ import { Routes, Route } from 'react-router-dom';
 
 export function App() {
   return (
-    <div className="min-h-screen bg-surface-secondary">
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <main className="flex flex-col items-center justify-center min-h-screen">
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <div className="fixed inset-0 flex items-center justify-center bg-surface-secondary">
+            <main className="flex flex-col items-center text-center px-4">
               <img src="/logo-presisso.png" alt="Presisso" className="h-16 mb-6" />
               <h1 className="font-display text-4xl font-bold text-presisso-black mb-4">
                 Presisso Studio
@@ -20,9 +20,9 @@ export function App() {
                 <button className="btn-secondary">Ver Catálogo</button>
               </div>
             </main>
-          }
-        />
-      </Routes>
-    </div>
+          </div>
+        }
+      />
+    </Routes>
   );
 }
