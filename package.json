@@ -13,6 +13,7 @@
     "db:seed": "pnpm --filter @presisso/api db:seed",
     "setup": "pnpm install && pnpm db:up && sleep 3 && pnpm db:migrate && pnpm db:seed"
   },
+  "packageManager": "pnpm@8.11.0",
   "devDependencies": {
     "turbo": "^2.0.0"
   }

@@ -3,6 +3,8 @@ import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import { env } from './config/env';
+import { errorHandler } from './middleware/error-handler';
+import { authRoutes } from './routes/auth.routes';
 
 export async function buildApp() {
   const app = Fastify({
@@ -23,15 +25,7 @@ export async function buildApp() {
   await app.register(rateLimit, { max: 100, timeWindow: '1 minute' });
 
   // Error handler global
-  app.setErrorHandler((error, _request, reply) => {
-    app.log.error(error);
-    const statusCode = error.statusCode ?? 500;
-    reply.status(statusCode).send({
-      error: error.name,
-      message: statusCode === 500 ? 'Internal Server Error' : error.message,
-      statusCode,
-    });
-  });
+  app.setErrorHandler(errorHandler);
 
   // Health check
   app.get('/api/health', async () => ({
@@ -39,8 +33,8 @@ export async function buildApp() {
     timestamp: new Date().toISOString(),
   }));
 
-  // Routes will be registered here as they are built
-  // await app.register(authRoutes, { prefix: '/api/auth' });
+  // Routes
+  await app.register(authRoutes, { prefix: '/api/auth' });
   // await app.register(projectRoutes, { prefix: '/api/projects' });
   // await app.register(productRoutes, { prefix: '/api/products' });
   // await app.register(chatRoutes, { prefix: '/api/chat' });
