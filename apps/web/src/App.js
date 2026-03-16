@@ -1,5 +1,23 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { MainLayout } from './components/layout/MainLayout';
+import { LoginPage } from './pages/LoginPage';
+import { AuthCallbackPage } from './pages/AuthCallbackPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { EditorPage } from './pages/EditorPage';
+import { CatalogPage } from './pages/CatalogPage';
+import { ArPage } from './pages/ArPage';
+import { VendorPage } from './pages/VendorPage';
+function ProtectedRoute() {
+    const { user, isLoading } = useAuth();
+    if (isLoading) {
+        return (_jsx("div", { className: "fixed inset-0 flex items-center justify-center bg-surface-tertiary", children: _jsx("div", { className: "w-8 h-8 border-2 border-presisso-red border-t-transparent rounded-full animate-spin" }) }));
+    }
+    if (!user)
+        return _jsx(Navigate, { to: "/login", replace: true });
+    return _jsx(Outlet, {});
+}
 export function App() {
-    return (_jsx("div", { className: "min-h-screen bg-surface-secondary", children: _jsx(Routes, { children: _jsx(Route, { path: "/", element: _jsxs("main", { className: "flex flex-col items-center justify-center min-h-screen", children: [_jsx("img", { src: "/logo-presisso.png", alt: "Presisso", className: "h-16 mb-6" }), _jsx("h1", { className: "font-display text-4xl font-bold text-presisso-black mb-4", children: "Presisso Studio" }), _jsx("p", { className: "text-presisso-gray text-lg", children: "Configurador 3D + AR para muebles premium" }), _jsxs("div", { className: "mt-8 flex gap-4", children: [_jsx("button", { className: "btn-primary", children: "Comenzar" }), _jsx("button", { className: "btn-secondary", children: "Ver Cat\u00E1logo" })] })] }) }) }) }));
+    return (_jsx(AuthProvider, { children: _jsxs(Routes, { children: [_jsx(Route, { path: "/login", element: _jsx(LoginPage, {}) }), _jsx(Route, { path: "/auth/callback", element: _jsx(AuthCallbackPage, {}) }), _jsx(Route, { element: _jsx(ProtectedRoute, {}), children: _jsxs(Route, { element: _jsx(MainLayout, {}), children: [_jsx(Route, { index: true, element: _jsx(DashboardPage, {}) }), _jsx(Route, { path: "editor/:projectId", element: _jsx(EditorPage, {}) }), _jsx(Route, { path: "catalog", element: _jsx(CatalogPage, {}) }), _jsx(Route, { path: "ar/:projectId", element: _jsx(ArPage, {}) }), _jsx(Route, { path: "vendor", element: _jsx(VendorPage, {}) })] }) }), _jsx(Route, { path: "*", element: _jsx(Navigate, { to: "/", replace: true }) })] }) }));
 }

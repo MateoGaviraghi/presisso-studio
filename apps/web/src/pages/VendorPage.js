@@ -1,0 +1,11 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { BarChart3 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
+export function VendorPage() {
+    const { user } = useAuth();
+    if (user && user.role === 'client') {
+        return _jsx(Navigate, { to: "/", replace: true });
+    }
+    return (_jsxs("div", { className: "p-6 lg:p-8 max-w-6xl", children: [_jsxs("div", { className: "mb-8", children: [_jsx("h1", { className: "text-2xl font-semibold text-presisso-charcoal", children: "Panel vendedor" }), _jsx("p", { className: "mt-1 text-[14px] text-presisso-gray", children: "Gesti\u00F3n de clientes y proyectos" })] }), _jsxs("div", { className: "card flex flex-col items-center justify-center py-16 text-center", children: [_jsx("div", { className: "w-14 h-14 rounded-2xl bg-presisso-red-light flex items-center justify-center mb-4", children: _jsx(BarChart3, { className: "w-6 h-6 text-presisso-red" }) }), _jsx("h3", { className: "text-lg font-semibold text-presisso-charcoal mb-1", children: "Panel de vendedor" }), _jsx("p", { className: "text-[14px] text-presisso-gray", children: "En construcci\u00F3n" })] })] }));
+}
